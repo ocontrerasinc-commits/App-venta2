@@ -1,0 +1,2200 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-emerald-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petland Beta - Guía Visual de Razas Adultas & Asesoría en Tienda</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        emerald: {
+                            850: '#064e3b',
+                            900: '#022c22',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #10b981; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #059669; }
+        body.modal-open { overflow: hidden; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-fade-in { animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="h-full font-sans text-slate-800 bg-[#f0fdf4] flex flex-col antialiased selection:bg-emerald-500 selection:text-white">
+
+    <!-- TOP HEADER -->
+    <header class="bg-gradient-to-r from-[#064e3b] via-[#047857] to-[#059669] text-white shadow-lg sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 sm:py-4">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+                <!-- Brand Title -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/20 shadow-inner">
+                            <i class="fa-solid fa-paw text-2xl text-emerald-300"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h1 class="text-xl font-bold tracking-tight text-white leading-tight">Petland</h1>
+                                <span class="bg-emerald-400/20 text-emerald-200 text-xs px-2 py-0.5 rounded-full border border-emerald-400/30 font-semibold tracking-wide uppercase">Beta</span>
+                            </div>
+                            <p class="text-xs text-emerald-100/80 font-medium">Guía Visual de Razas Adultas & Asesoría en Tienda</p>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Comparator Badge -->
+                    <button id="btn-open-comparator-mobile" onclick="openComparatorModal()" class="md:hidden relative bg-emerald-800/80 hover:bg-emerald-800 text-emerald-100 px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-2 border border-emerald-600/50 transition">
+                        <i class="fa-solid fa-code-compare text-emerald-300"></i>
+                        <span>Comparar</span>
+                        <span id="compare-count-badge-mobile" class="bg-emerald-400 text-emerald-950 font-bold px-1.5 py-0.2 text-[11px] rounded-full">0/2</span>
+                    </button>
+                </div>
+
+                <!-- Search and Controls -->
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    <!-- Search Input -->
+                    <div class="relative flex-1 sm:w-72">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-emerald-200">
+                            <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                        </div>
+                        <input type="text" id="search-input" oninput="handleSearch()" placeholder="Buscar raza (ej. Golden, Persa)..."
+                            class="w-full pl-9 pr-8 py-2 bg-emerald-950/40 hover:bg-emerald-950/60 focus:bg-emerald-950/80 border border-emerald-500/40 focus:border-emerald-300 text-white placeholder-emerald-200/60 rounded-xl text-sm transition outline-none shadow-inner">
+                        <button id="btn-clear-search" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-3 flex items-center text-emerald-300 hover:text-white">
+                            <i class="fa-solid fa-xmark text-sm"></i>
+                        </button>
+                    </div>
+
+                    <!-- Compare Desktop Button -->
+                    <button id="btn-open-comparator" onclick="openComparatorModal()" class="hidden md:flex items-center gap-2 bg-emerald-950/50 hover:bg-emerald-900 text-emerald-100 px-3.5 py-2 rounded-xl text-sm font-semibold border border-emerald-500/40 transition shadow-sm hover:shadow">
+                        <i class="fa-solid fa-code-compare text-emerald-300"></i>
+                        <span>Comparar Razas</span>
+                        <span id="compare-count-badge" class="bg-emerald-400 text-emerald-950 font-extrabold text-xs px-2 py-0.5 rounded-full ml-1">0/2</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Species Filter Tabs -->
+            <div class="flex items-center gap-2 mt-4 pt-2 border-t border-emerald-600/40 overflow-x-auto no-scrollbar">
+                <button onclick="filterSpecies('all')" id="tab-all" class="species-tab active-tab bg-white text-emerald-900 font-bold px-4 py-1.5 rounded-lg text-xs sm:text-sm flex items-center gap-2 shadow-sm transition whitespace-nowrap">
+                    <i class="fa-solid fa-border-all text-xs"></i>
+                    <span>Todas las razas</span>
+                    <span id="count-all" class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full font-bold">38</span>
+                </button>
+                <button onclick="filterSpecies('dog')" id="tab-dog" class="species-tab text-emerald-100 hover:text-white hover:bg-white/10 px-4 py-1.5 rounded-lg text-xs sm:text-sm font-medium flex items-center gap-2 transition whitespace-nowrap">
+                    <i class="fa-solid fa-dog text-xs"></i>
+                    <span>Perros</span>
+                    <span id="count-dog" class="bg-emerald-950/40 text-emerald-200 text-xs px-2 py-0.5 rounded-full font-bold">32</span>
+                </button>
+                <button onclick="filterSpecies('cat')" id="tab-cat" class="species-tab text-emerald-100 hover:text-white hover:bg-white/10 px-4 py-1.5 rounded-lg text-xs sm:text-sm font-medium flex items-center gap-2 transition whitespace-nowrap">
+                    <i class="fa-solid fa-cat text-xs"></i>
+                    <span>Gatos</span>
+                    <span id="count-cat" class="bg-emerald-950/40 text-emerald-200 text-xs px-2 py-0.5 rounded-full font-bold">6</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTAINER -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <!-- Quick Info Banner -->
+        <div class="mb-6 bg-white border border-emerald-200/80 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                    <i class="fa-solid fa-store text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-sm font-bold text-slate-900">Asesoría de Ventas en Tienda Petland</h2>
+                    <p class="text-xs text-slate-500">Muestre a los clientes la alzada adulta real (escala 0–180 cm), perfil Wamiz y dieta Royal Canin recomendada.</p>
+                </div>
+            </div>
+            <div class="text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1.5 rounded-xl shrink-0">
+                <i class="fa-solid fa-check-circle mr-1"></i> 38 Razas Calibradas (A–Z)
+            </div>
+        </div>
+
+        <!-- Breed Grid -->
+        <div id="breed-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6"></div>
+
+        <!-- Empty Search State -->
+        <div id="empty-state" class="hidden text-center py-16 bg-white rounded-2xl border border-dashed border-emerald-200">
+            <div class="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-3">
+                <i class="fa-solid fa-magnifying-glass text-2xl"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-800">No se encontraron razas</h3>
+            <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto">Intenta buscar con otros términos como "Golden", "Bulldog" o limpia la búsqueda.</p>
+            <button onclick="clearSearch()" class="mt-4 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold rounded-xl transition">
+                Restablecer Filtros
+            </button>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-emerald-100 mt-auto py-6">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            <p class="font-medium">Petland Beta &copy; 2026 &bull; Catálogo de Razas Adultas & Asesoría Nutricional Canina/Felina</p>
+            <p class="text-slate-400 mt-1">Herramienta interna para asesores en punto de venta. Información calibrada de altura al lomo (cm).</p>
+        </div>
+    </footer>
+
+    <!-- ==================== MODAL: DETALLE FULLSCREEN ==================== -->
+    <div id="detail-modal" class="hidden fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex flex-col h-screen w-screen overflow-hidden">
+        <!-- MODAL TOP BAR (Emerald Gradient) -->
+        <div class="bg-gradient-to-r from-[#064e3b] via-[#047857] to-[#059669] text-white px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2 shadow-md shrink-0">
+            <div class="flex items-center gap-2 min-w-0 flex-1">
+                <span id="modal-species-badge" class="bg-emerald-950/50 text-emerald-200 border border-emerald-400/40 text-[10px] sm:text-xs px-2.5 py-1 rounded-full font-bold uppercase tracking-wider shrink-0">
+                    Perro
+                </span>
+                <h2 id="modal-breed-name" class="text-sm sm:text-lg font-bold text-white leading-tight truncate">Nombre de la Raza</h2>
+            </div>
+
+            <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+                <!-- Pagination -->
+                <div class="flex items-center bg-emerald-950/50 rounded-full p-0.5 border border-emerald-400/30 text-xs">
+                    <button onclick="navigateModal(-1)" class="w-7 h-7 flex items-center justify-center hover:bg-white/10 rounded-full text-emerald-100 hover:text-white transition" title="Raza Anterior">
+                        <i class="fa-solid fa-chevron-left text-[11px]"></i>
+                    </button>
+                    <span id="modal-pagination-counter" class="px-1.5 font-mono font-bold text-white text-[11px] sm:text-xs">1/38</span>
+                    <button onclick="navigateModal(1)" class="w-7 h-7 flex items-center justify-center hover:bg-white/10 rounded-full text-emerald-100 hover:text-white transition" title="Siguiente Raza">
+                        <i class="fa-solid fa-chevron-right text-[11px]"></i>
+                    </button>
+                </div>
+
+                <!-- Compare Toggle Button -->
+                <button id="modal-btn-compare" onclick="toggleCompareFromModal()" class="w-8 h-8 sm:w-auto sm:px-3 sm:py-1.5 bg-emerald-950/50 hover:bg-emerald-900 text-xs font-semibold text-white rounded-full border border-emerald-400/30 transition flex items-center justify-center gap-1.5" title="Comparar Raza">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    <span class="hidden md:inline">Comparar</span>
+                </button>
+
+                <!-- WhatsApp Advisory Button -->
+                <button onclick="openWhatsappModal()" class="w-8 h-8 sm:w-auto sm:px-3 sm:py-1.5 bg-emerald-400 hover:bg-emerald-300 text-emerald-950 text-xs font-bold rounded-full transition flex items-center justify-center gap-1.5 shadow" title="Enviar Asesoría por WhatsApp">
+                    <i class="fa-brands fa-whatsapp text-sm"></i>
+                    <span class="hidden md:inline">WhatsApp</span>
+                </button>
+
+                <!-- Close Modal -->
+                <button onclick="closeDetailModal()" class="w-8 h-8 flex items-center justify-center bg-emerald-950/50 text-emerald-100 hover:text-white hover:bg-emerald-900 rounded-full border border-emerald-400/30 transition" title="Cerrar">
+                    <i class="fa-solid fa-xmark text-sm"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- MODAL SECONDARY 3-TAB BAR (White Theme) -->
+        <div class="bg-white text-slate-600 border-b border-emerald-200 px-3 sm:px-6 flex items-center gap-2 sm:gap-4 overflow-x-auto no-scrollbar shrink-0 shadow-xs">
+            <button onclick="switchTab('tab-ficha')" id="nav-btn-ficha" class="modal-nav-tab active-modal-tab py-3 px-2 sm:px-3 text-xs sm:text-sm font-bold border-b-2 border-emerald-600 text-emerald-700 flex items-center gap-1.5 whitespace-nowrap transition">
+                <i class="fa-solid fa-clipboard-list"></i> Ficha y Tamaño Real
+            </button>
+            <button onclick="switchTab('tab-foto')" id="nav-btn-foto" class="modal-nav-tab py-3 px-2 sm:px-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-emerald-700 flex items-center gap-1.5 whitespace-nowrap transition">
+                <i class="fa-solid fa-camera-retro"></i> Fotografía Adulta IA
+            </button>
+            <button onclick="switchTab('tab-asistente')" id="nav-btn-asistente" class="modal-nav-tab py-3 px-2 sm:px-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-emerald-700 flex items-center gap-1.5 whitespace-nowrap transition">
+                <i class="fa-solid fa-robot"></i> Asistente IA
+            </button>
+        </div>
+
+        <!-- MODAL CONTENT AREA (Scrollable Light Emerald Canvas) -->
+        <div class="flex-1 overflow-y-auto bg-[#f0fdf4] text-slate-800 p-4 sm:p-6">
+
+            <!-- TAB 1: FICHA Y TAMAÑO REAL (WAMIZ STYLE + ESCALA 0-180 CM + ROYAL CANIN) -->
+            <div id="tab-content-ficha" class="max-w-5xl mx-auto space-y-6">
+                
+                <!-- Top Overview Card -->
+                <div class="bg-white rounded-2xl p-4 sm:p-6 border border-emerald-200/80 shadow-sm grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Left: Photo & Colors -->
+                    <div class="lg:col-span-5 flex flex-col">
+                        <div class="relative w-full h-64 sm:h-72 bg-slate-100 rounded-xl overflow-hidden border border-emerald-100 group">
+                            <img id="ficha-img" src="" alt="" class="w-full h-full object-cover transition duration-300 group-hover:scale-105">
+                            <button onclick="openLightboxFromFicha()" class="absolute bottom-3 right-3 bg-slate-900/80 hover:bg-slate-900 text-white text-xs font-semibold px-3 py-1.5 rounded-lg backdrop-blur-md flex items-center gap-1.5 transition shadow">
+                                <i class="fa-solid fa-expand"></i> Ampliar
+                            </button>
+                        </div>
+
+                        <div class="mt-4">
+                            <span class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2">Colores de Pelaje Habituales</span>
+                            <div id="ficha-colors" class="flex flex-wrap gap-1.5"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right: General Description + Metrics + Wamiz 8 Bars -->
+                    <div class="lg:col-span-7 flex flex-col justify-between space-y-5">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[11px] font-bold text-emerald-700 uppercase tracking-wider">Descripción General</span>
+                                <span id="ficha-size-category" class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full">Mediano</span>
+                            </div>
+                            <p id="ficha-description" class="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                                Descripción detallada de la raza.
+                            </p>
+                        </div>
+
+                        <!-- 4 Key Metrics Cards -->
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                            <div class="bg-emerald-50/80 border border-emerald-200/70 p-3 rounded-xl">
+                                <span class="block text-[10px] font-bold text-emerald-700 uppercase">Altura Adulto</span>
+                                <span id="ficha-metric-height" class="text-sm font-extrabold text-slate-900 mt-0.5 block">55 - 61 cm</span>
+                            </div>
+                            <div class="bg-emerald-50/80 border border-emerald-200/70 p-3 rounded-xl">
+                                <span class="block text-[10px] font-bold text-emerald-700 uppercase">Peso Adulto</span>
+                                <span id="ficha-metric-weight" class="text-sm font-extrabold text-slate-900 mt-0.5 block">25 - 34 kg</span>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200/80 p-3 rounded-xl">
+                                <span class="block text-[10px] font-bold text-slate-500 uppercase">Esperanza Vida</span>
+                                <span id="ficha-metric-lifespan" class="text-sm font-extrabold text-slate-900 mt-0.5 block">10 - 12 años</span>
+                            </div>
+                            <div class="bg-slate-50 border border-slate-200/80 p-3 rounded-xl">
+                                <span class="block text-[10px] font-bold text-slate-500 uppercase">Nivel Energía</span>
+                                <span id="ficha-metric-energy-label" class="text-sm font-extrabold text-slate-900 mt-0.5 block">Alta</span>
+                            </div>
+                        </div>
+
+                        <!-- Wamiz 8-Metric Behavior & Lifestyle Ratings -->
+                        <div class="pt-2 border-t border-slate-100">
+                            <h4 class="text-xs font-bold text-slate-800 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                                <i class="fa-solid fa-chart-simple text-emerald-600"></i> Perfil de Convivencia y Cuidados (Estilo Wamiz)
+                            </h4>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2.5 text-xs">
+                                <div>
+                                    <div class="flex justify-between mb-1"><span class="text-slate-600 font-medium">Apto para departamento</span><span id="score-val-apt" class="font-bold text-emerald-700">4/5</span></div>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="score-bar-apt" class="bg-emerald-500 h-full rounded-full"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-1"><span class="text-slate-600 font-medium">Ideal para primerizos</span><span id="score-val-novice" class="font-bold text-emerald-700">4/5</span></div>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="score-bar-novice" class="bg-emerald-500 h-full rounded-full"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-1"><span class="text-slate-600 font-medium">Convivencia con niños</span><span id="score-val-kids" class="font-bold text-emerald-700">5/5</span></div>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="score-bar-kids" class="bg-emerald-500 h-full rounded-full"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-1"><span class="text-slate-600 font-medium">Sociable con otras mascotas</span><span id="score-val-pets" class="font-bold text-emerald-700">4/5</span></div>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="score-bar-pets" class="bg-emerald-500 h-full rounded-full"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-1"><span class="text-slate-600 font-medium">Necesidad de ejercicio</span><span id="score-val-energy" class="font-bold text-emerald-700">4/5</span></div>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="score-bar-energy" class="bg-emerald-500 h-full rounded-full"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-1"><span class="text-slate-600 font-medium">Facilidad de adiestramiento</span><span id="score-val-training" class="font-bold text-emerald-700">5/5</span></div>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="score-bar-training" class="bg-emerald-500 h-full rounded-full"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-1"><span class="text-slate-600 font-medium">Nivel de ladrido / maullido</span><span id="score-val-barking" class="font-bold text-emerald-700">2/5</span></div>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="score-bar-barking" class="bg-amber-500 h-full rounded-full"></div></div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between mb-1"><span class="text-slate-600 font-medium">Mantenimiento y cepillado</span><span id="score-val-grooming" class="font-bold text-emerald-700">3/5</span></div>
+                                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden"><div id="score-bar-grooming" class="bg-emerald-500 h-full rounded-full"></div></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sales Advisor Tip -->
+                        <div class="bg-amber-50 border border-amber-200 p-3.5 rounded-xl text-xs flex gap-3 items-start">
+                            <i class="fa-solid fa-lightbulb text-amber-500 text-base mt-0.5 shrink-0"></i>
+                            <div>
+                                <span class="font-bold text-amber-900 uppercase text-[10px] tracking-wider block">Argumento Clave de Venta en Tienda:</span>
+                                <p id="ficha-selling-tip" class="text-amber-800 mt-0.5 leading-relaxed"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CALIBRATED REAL-SIZE SCALE SECTION (0 - 180 CM) -->
+                <div class="bg-white rounded-2xl p-4 sm:p-6 border border-emerald-200/80 shadow-sm space-y-4">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div>
+                            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-ruler-vertical text-emerald-600"></i> Comparador de Alzada Adulta Real (0–180 cm)
+                            </h3>
+                            <p class="text-xs text-slate-500">Altura real a la cruz comparada contra una mesa estándar (75 cm) y una persona.</p>
+                        </div>
+                        <div class="flex items-center gap-2 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+                            <label for="human-height-select" class="text-xs font-semibold text-emerald-900 whitespace-nowrap">Estatura Cliente:</label>
+                            <select id="human-height-select" onchange="updateStageHeight()" class="bg-white text-emerald-800 font-bold text-xs px-2 py-1 rounded-lg border border-emerald-300 focus:outline-none">
+                                <option value="165">165 cm</option>
+                                <option value="170">170 cm</option>
+                                <option value="175" selected>175 cm</option>
+                                <option value="180">180 cm</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Stage Canvas -->
+                    <div class="bg-slate-900 rounded-2xl p-4 sm:p-6 relative overflow-hidden min-h-[380px] flex flex-col justify-end shadow-inner">
+                        <div class="relative w-full h-[310px] flex items-end justify-between px-1 sm:px-8">
+                            <!-- Y-Axis -->
+                            <div class="absolute left-0 top-0 bottom-0 w-12 sm:w-14 border-r border-slate-700 flex flex-col justify-between text-[10px] font-mono text-slate-400 py-1 select-none">
+                                <div class="flex items-center justify-between pr-1"><span>180cm</span><div class="w-1.5 h-[1px] bg-slate-600"></div></div>
+                                <div class="flex items-center justify-between pr-1"><span>135cm</span><div class="w-1.5 h-[1px] bg-slate-600"></div></div>
+                                <div class="flex items-center justify-between pr-1"><span class="text-amber-400">90cm</span><div class="w-1.5 h-[1px] bg-amber-500"></div></div>
+                                <div class="flex items-center justify-between pr-1"><span class="text-emerald-400">75cm</span><div class="w-1.5 h-[1px] bg-emerald-500"></div></div>
+                                <div class="flex items-center justify-between pr-1"><span>45cm</span><div class="w-1.5 h-[1px] bg-slate-600"></div></div>
+                                <div class="flex items-center justify-between pr-1"><span>0cm</span><div class="w-2.5 h-[2px] bg-emerald-400"></div></div>
+                            </div>
+
+                            <!-- Stage Lanes -->
+                            <div class="ml-12 sm:ml-16 w-full h-full relative flex items-end justify-around">
+                                <div class="absolute bottom-0 left-0 right-0 h-[2px] bg-emerald-500 z-10"></div>
+
+                                <!-- Pet Lane -->
+                                <div class="flex flex-col items-center justify-end z-20 w-28 sm:w-36">
+                                    <div id="stage-breed-top-label" class="mb-1.5 bg-emerald-950 text-emerald-300 border border-emerald-500/50 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-lg text-center whitespace-nowrap">
+                                        -- cm
+                                    </div>
+                                    <div id="stage-breed-vector" class="w-24 sm:w-32 bg-emerald-500/20 border-2 border-emerald-400 rounded-t-xl flex flex-col items-center justify-center text-emerald-300 transition-all duration-300" style="height: 110px;">
+                                        <i id="stage-breed-icon" class="fa-solid fa-dog text-2xl sm:text-3xl text-emerald-400"></i>
+                                    </div>
+                                    <div id="stage-breed-bottom-label" class="mt-2 text-[11px] sm:text-xs font-bold text-white text-center truncate max-w-[120px]">Raza</div>
+                                </div>
+
+                                <!-- Table Lane (75cm) -->
+                                <div class="flex flex-col items-center justify-end z-20 w-24 sm:w-32">
+                                    <div class="mb-1.5 bg-amber-950 text-amber-300 border border-amber-500/50 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-lg text-center whitespace-nowrap">
+                                        75 cm
+                                    </div>
+                                    <div id="stage-table-vector" class="w-24 sm:w-28 bg-amber-500/15 border-2 border-amber-500/60 rounded-t-lg flex flex-col justify-between p-1 transition-all duration-300" style="height: 125px;">
+                                        <div class="w-full h-2.5 bg-amber-500/60 rounded"></div>
+                                        <div class="w-full flex justify-between h-full px-2 pt-1">
+                                            <div class="w-1.5 h-full bg-amber-600/50"></div>
+                                            <div class="w-1.5 h-full bg-amber-600/50"></div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-2 text-[11px] sm:text-xs font-medium text-slate-400 text-center">Mesa (75cm)</div>
+                                </div>
+
+                                <!-- Human Lane -->
+                                <div class="flex flex-col items-center justify-end z-20 w-24 sm:w-32">
+                                    <div id="stage-human-top-label" class="mb-1.5 bg-slate-800 text-slate-200 border border-slate-600 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-lg text-center whitespace-nowrap">
+                                        175 cm
+                                    </div>
+                                    <div id="stage-human-vector" class="w-14 sm:w-18 bg-slate-700/50 border-2 border-slate-400 rounded-t-3xl flex flex-col items-center justify-start pt-2 transition-all duration-300" style="height: 290px;">
+                                        <div class="w-7 h-7 rounded-full border-2 border-slate-300 bg-slate-800 mb-1"></div>
+                                        <div class="w-9 h-24 bg-slate-600/60 rounded-lg"></div>
+                                    </div>
+                                    <div class="mt-2 text-[11px] sm:text-xs font-medium text-slate-400 text-center">Persona</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ROYAL CANIN NUTRITION SUMMARY CARD (KEPT IN FICHA TAB) -->
+                <div class="bg-white rounded-2xl p-4 sm:p-5 border border-emerald-200/80 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div class="flex items-start sm:items-center gap-3.5">
+                        <div class="w-12 h-12 rounded-xl bg-red-600 text-white font-extrabold flex items-center justify-center shadow text-[11px] tracking-tighter text-center leading-tight shrink-0">
+                            ROYAL<br>CANIN
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-red-600 bg-red-50 px-2 py-0.5 rounded border border-red-200">Nutrición Recomendada en Tienda</span>
+                            <h4 id="ficha-rc-formula" class="text-sm sm:text-base font-bold text-slate-900 mt-1">Royal Canin Formula</h4>
+                            <p id="ficha-rc-desc" class="text-xs text-slate-600 mt-0.5 leading-relaxed max-w-2xl"></p>
+                        </div>
+                    </div>
+                    <button onclick="copyNutritionInfo()" class="w-full sm:w-auto px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-2 shrink-0">
+                        <i class="fa-regular fa-copy"></i> Copiar Dieta
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 2: FOTOGRAFÍA ADULTA IA -->
+            <div id="tab-content-foto" class="hidden max-w-5xl mx-auto">
+                <div class="bg-white rounded-2xl p-4 sm:p-6 border border-emerald-200/80 shadow-sm">
+                    <div class="pb-4 mb-5 border-b border-slate-100">
+                        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles text-emerald-600"></i> Estudio Fotográfico Adulto IA (Gemini)
+                        </h3>
+                        <p class="text-xs text-slate-500 mt-0.5">Selecciona el color de manto y el entorno para visualizar al ejemplar en su etapa adulta.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                        <!-- Image Preview Frame (First on Mobile, Right on Desktop) -->
+                        <div class="order-1 lg:order-2 lg:col-span-8 bg-slate-950 rounded-2xl p-2 border border-slate-800 flex flex-col items-center justify-center min-h-[280px] sm:min-h-[380px] relative overflow-hidden">
+                            <img id="ai-photo-view" src="" alt="Vista previa adulta" class="w-full h-64 sm:h-[380px] object-cover rounded-xl transition duration-300">
+                            
+                            <!-- Loading Overlay -->
+                            <div id="ai-loading-overlay" class="hidden absolute inset-0 bg-slate-950/80 backdrop-blur-sm flex flex-col items-center justify-center text-white p-4 text-center z-20">
+                                <div class="w-10 h-10 border-4 border-emerald-400 border-t-transparent rounded-full animate-spin mb-3"></div>
+                                <p id="ai-loading-text" class="text-xs sm:text-sm font-bold text-emerald-300">Recreando fotografía adulta hiperrealista...</p>
+                                <p class="text-[11px] text-slate-400 mt-1">Lente 85mm f/1.4 &bull; Estándar adulto consolidado</p>
+                            </div>
+
+                            <!-- Floating Actions -->
+                            <div class="absolute top-4 right-4 flex items-center gap-2 z-10">
+                                <button onclick="downloadCurrentImage()" class="bg-slate-900/80 hover:bg-slate-900 text-white p-2.5 rounded-xl backdrop-blur-md border border-white/15 transition" title="Descargar">
+                                    <i class="fa-solid fa-download text-xs"></i>
+                                </button>
+                                <button onclick="openLightbox()" class="bg-slate-900/80 hover:bg-slate-900 text-white p-2.5 rounded-xl backdrop-blur-md border border-white/15 transition" title="Pantalla Completa">
+                                    <i class="fa-solid fa-expand text-xs"></i>
+                                </button>
+                            </div>
+
+                            <div class="absolute bottom-4 left-4 bg-slate-900/80 backdrop-blur-md text-emerald-300 text-[11px] font-semibold px-3 py-1 rounded-lg border border-white/10">
+                                <i class="fa-solid fa-camera mr-1"></i> DSLR 85mm &bull; Estándar Adulto
+                            </div>
+                        </div>
+
+                        <!-- Filter Controls (Second on Mobile, Left on Desktop) -->
+                        <div class="order-2 lg:order-1 lg:col-span-4 space-y-4 flex flex-col justify-between">
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Seleccionar Pelaje / Variante:</label>
+                                    <select id="ai-coat-select" onchange="generateGeminiAdultPhoto()" class="w-full bg-emerald-50/60 border border-emerald-200 text-slate-800 text-xs font-semibold rounded-xl p-3 focus:outline-none focus:border-emerald-500">
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold uppercase text-slate-600 mb-1.5">Entorno / Escenario Visual:</label>
+                                    <select id="ai-setting-select" onchange="generateGeminiAdultPhoto()" class="w-full bg-emerald-50/60 border border-emerald-200 text-slate-800 text-xs font-semibold rounded-xl p-3 focus:outline-none focus:border-emerald-500">
+                                        <option value="Estudio Fotográfico Profesional">Estudio Fotográfico Profesional</option>
+                                        <option value="Jardín Residencial Soleado">Jardín Residencial Exterior</option>
+                                        <option value="Sala Moderna de Departamento">Interior de Departamento Moderno</option>
+                                        <option value="Parque Urbano con Césped">Parque Urbano Abierto</option>
+                                    </select>
+                                </div>
+
+                                <button onclick="generateGeminiAdultPhoto(true)" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-wand-magic-sparkles"></i> Generar Nueva Fotografía IA
+                                </button>
+                            </div>
+
+                            <div class="bg-emerald-50 border border-emerald-200/80 p-3.5 rounded-xl text-xs text-slate-600 space-y-1.5">
+                                <div class="font-bold text-emerald-800 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-circle-check text-emerald-600"></i> Garantía de Proporción Adulta
+                                </div>
+                                <p class="text-[11px] leading-relaxed">
+                                    Muestra al cliente cómo lucirá su mascota entre los 12 y 18 meses de edad con el color de manto elegido.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: ASISTENTE IA PARA EL ASESOR (CHAT INTERACTIVO) -->
+            <div id="tab-content-asistente" class="hidden max-w-4xl mx-auto">
+                <div class="bg-white rounded-2xl border border-emerald-200/80 shadow-sm flex flex-col h-[560px] sm:h-[600px] overflow-hidden">
+                    <!-- Chat Header -->
+                    <div class="bg-gradient-to-r from-emerald-50 to-white px-4 sm:px-6 py-3.5 border-b border-emerald-100 flex items-center justify-between shrink-0">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+                                <i class="fa-solid fa-robot"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900">Asistente IA de Ventas Petland</h3>
+                                <p class="text-[11px] text-emerald-700 font-medium">Soporte en tiempo real para dudas de clientes en piso de venta</p>
+                            </div>
+                        </div>
+                        <button onclick="resetChatHistory()" class="text-xs text-slate-500 hover:text-emerald-700 font-semibold px-2.5 py-1.5 rounded-lg hover:bg-emerald-50 transition flex items-center gap-1">
+                            <i class="fa-solid fa-rotate-right"></i> <span class="hidden sm:inline">Limpiar Chat</span>
+                        </button>
+                    </div>
+
+                    <!-- Quick Advisor Prompt Chips -->
+                    <div class="px-4 py-2.5 bg-slate-50/80 border-b border-slate-100 flex items-center gap-2 overflow-x-auto no-scrollbar shrink-0">
+                        <button onclick="sendQuickAdvisorPrompt('departamento')" class="text-[11px] font-semibold bg-white hover:bg-emerald-600 hover:text-white text-slate-700 px-3 py-1.5 rounded-full border border-emerald-200 transition whitespace-nowrap shadow-2xs">
+                            🏢 ¿Apto departamento?
+                        </button>
+                        <button onclick="sendQuickAdvisorPrompt('ninos')" class="text-[11px] font-semibold bg-white hover:bg-emerald-600 hover:text-white text-slate-700 px-3 py-1.5 rounded-full border border-emerald-200 transition whitespace-nowrap shadow-2xs">
+                            👶 Convivencia con niños
+                        </button>
+                        <button onclick="sendQuickAdvisorPrompt('pelaje')" class="text-[11px] font-semibold bg-white hover:bg-emerald-600 hover:text-white text-slate-700 px-3 py-1.5 rounded-full border border-emerald-200 transition whitespace-nowrap shadow-2xs">
+                            ✂️ Cuidado de pelaje
+                        </button>
+                        <button onclick="sendQuickAdvisorPrompt('nutricion')" class="text-[11px] font-semibold bg-white hover:bg-emerald-600 hover:text-white text-slate-700 px-3 py-1.5 rounded-full border border-emerald-200 transition whitespace-nowrap shadow-2xs">
+                            🥣 Dieta Royal Canin
+                        </button>
+                        <button onclick="sendQuickAdvisorPrompt('kit')" class="text-[11px] font-semibold bg-white hover:bg-emerald-600 hover:text-white text-slate-700 px-3 py-1.5 rounded-full border border-emerald-200 transition whitespace-nowrap shadow-2xs">
+                            🛍️ Kit primera compra
+                        </button>
+                        <button onclick="sendQuickAdvisorPrompt('objecion')" class="text-[11px] font-semibold bg-white hover:bg-emerald-600 hover:text-white text-slate-700 px-3 py-1.5 rounded-full border border-emerald-200 transition whitespace-nowrap shadow-2xs">
+                            🤝 Argumento de cierre
+                        </button>
+                    </div>
+
+                    <!-- Chat Messages Container -->
+                    <div id="chat-history" class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4 bg-[#f8fafc]">
+                        <!-- Populated via JS -->
+                    </div>
+
+                    <!-- Chat Input Form -->
+                    <div class="p-3 sm:p-4 bg-white border-t border-emerald-100 shrink-0 flex items-center gap-2">
+                        <input type="text" id="chat-input" onkeydown="if(event.key==='Enter') handleChatSubmit()" placeholder="Escribe la duda del cliente (ej. ¿Suelta mucho pelo? ¿Se lleva bien con gatos?)..."
+                            class="flex-1 bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:bg-white text-slate-800 placeholder-slate-400 text-xs sm:text-sm rounded-xl px-4 py-2.5 outline-none transition">
+                        <button id="btn-send-chat" onclick="handleChatSubmit()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition flex items-center gap-1.5 shrink-0 shadow-sm">
+                            <span>Enviar</span>
+                            <i class="fa-solid fa-paper-plane text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: COMPARADOR DE 2 RAZAS ==================== -->
+    <div id="comparator-modal" class="hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white border border-emerald-200 text-slate-800 w-full max-w-5xl rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-gradient-to-r from-[#064e3b] to-[#047857] text-white px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-solid fa-code-compare text-emerald-300 text-lg"></i>
+                    <h3 class="text-base font-bold">Comparativa Estricta de 2 Razas</h3>
+                </div>
+                <button onclick="closeComparatorModal()" class="text-emerald-100 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div id="comparator-content" class="p-6 overflow-y-auto flex-1 bg-[#f0fdf4]"></div>
+
+            <div class="bg-white px-6 py-3 border-t border-emerald-100 flex items-center justify-between text-xs">
+                <button onclick="clearComparator()" class="text-rose-600 hover:text-rose-700 font-bold flex items-center gap-1">
+                    <i class="fa-solid fa-trash-can"></i> Limpiar Selección
+                </button>
+                <button onclick="closeComparatorModal()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition">
+                    Cerrar Comparador
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: ENVÍO WHATSAPP ==================== -->
+    <div id="whatsapp-modal" class="hidden fixed inset-0 z-50 bg-slate-950/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white border border-emerald-200 text-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+            <div class="bg-gradient-to-r from-[#064e3b] to-[#047857] text-white px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-emerald-300 text-xl"></i>
+                    <h3 class="text-base font-bold">Enviar Ficha de Asesoría por WhatsApp</h3>
+                </div>
+                <button onclick="closeWhatsappModal()" class="text-emerald-100 hover:text-white transition">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-4 text-xs bg-[#f0fdf4]/50">
+                <div>
+                    <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px]">Plantilla Rápida:</label>
+                    <select id="wa-preset-select" onchange="applyWhatsappPreset()" class="w-full bg-white border border-emerald-200 text-slate-800 font-semibold rounded-xl p-2.5 focus:outline-none focus:border-emerald-500">
+                        <option value="full">Ficha Completa de Asesoría</option>
+                        <option value="nutrition">Enfoque Nutricional Royal Canin</option>
+                        <option value="size">Medidas y Adaptabilidad a Hogar</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 bg-white p-3 rounded-xl border border-emerald-200/80">
+                    <label class="flex items-center gap-2 text-slate-700 font-medium cursor-pointer">
+                        <input type="checkbox" id="wa-check-basics" checked onchange="buildWhatsappMessage()" class="accent-emerald-600 rounded">
+                        <span>Datos Básicos</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-slate-700 font-medium cursor-pointer">
+                        <input type="checkbox" id="wa-check-metrics" checked onchange="buildWhatsappMessage()" class="accent-emerald-600 rounded">
+                        <span>Medidas & Alzada</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-slate-700 font-medium cursor-pointer">
+                        <input type="checkbox" id="wa-check-rc" checked onchange="buildWhatsappMessage()" class="accent-emerald-600 rounded">
+                        <span>Nutrición Royal Canin</span>
+                    </label>
+                    <label class="flex items-center gap-2 text-slate-700 font-medium cursor-pointer">
+                        <input type="checkbox" id="wa-check-tip" checked onchange="buildWhatsappMessage()" class="accent-emerald-600 rounded">
+                        <span>Tip de Asesor</span>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-700 uppercase mb-1 text-[11px]">Mensaje para el Cliente (Editable):</label>
+                    <textarea id="wa-message-text" rows="6" class="w-full bg-white border border-emerald-200 rounded-xl p-3 text-slate-800 text-xs font-mono focus:outline-none focus:border-emerald-500 leading-relaxed"></textarea>
+                </div>
+            </div>
+
+            <div class="bg-white px-6 py-3 border-t border-emerald-100 flex items-center justify-between gap-3">
+                <button onclick="copyWhatsappMessage()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition flex items-center gap-1.5">
+                    <i class="fa-regular fa-copy"></i> Copiar Texto
+                </button>
+                <button onclick="sendToWhatsappLink()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-base"></i> Abrir WhatsApp
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== LIGHTBOX IMAGE VIEWER ==================== -->
+    <div id="lightbox-modal" class="hidden fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center p-4">
+        <button onclick="closeLightbox()" class="absolute top-4 right-4 text-white bg-slate-800/80 p-3 rounded-full hover:bg-slate-700 transition">
+            <i class="fa-solid fa-xmark text-xl"></i>
+        </button>
+        <img id="lightbox-img" src="" alt="Fotografía limpia" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl">
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 bg-emerald-700 text-white text-xs font-bold px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 transform translate-y-20 opacity-0 transition-all duration-300">
+        <i class="fa-solid fa-circle-check text-base"></i>
+        <span id="toast-message">Notificación</span>
+    </div>
+
+    <script>
+        const apiKey = ""; // Ejecución segura en entorno Canvas / Estático con respaldo local inteligente
+
+        // 38 BREEDS DATASET (A-Z STRICTLY SORTED + WAMIZ 8 METRICS + WIKIPEDIA SLUGS)
+        const BREEDS_DATA = [
+            {
+                id: "akita-inu",
+                name: "Akita Inu",
+                species: "dog",
+                wikiTitle: "Akita_(dog)",
+                height: "60 - 70 cm",
+                heightMax: 70,
+                weight: "32 - 45 kg",
+                lifespan: "10 - 12 años",
+                sizeCategory: "Grande",
+                energyLabel: "Moderada-Alta",
+                colors: ["Rojo Fuego con Urajiro", "Sésamo", "Atigrado", "Blanco Puro"],
+                scores: { apartment: 2, novice: 2, kids: 3, pets: 2, energy: 3, training: 3, barking: 2, grooming: 4 },
+                desc: "Perro japonés de porte majestuoso, leal y reservado. Destaca por su valentía, dignidad y fuerte vínculo con su familia.",
+                tip: "Raza noble con instinto protector. Requiere dueño firme, socialización temprana y cepillado constante en época de muda.",
+                rcFormula: "Royal Canin Maxi Adult",
+                rcDesc: "Apoya la salud osteoarticular y promueve una digestión óptima con proteínas de alta calidad e ingredientes de alta digestibilidad.",
+                kit: ["Cepillo carda doble para subpelo", "Peine metálico deslanador", "Arnés antitirones reforzado", "Comedero elevado de acero inoxidable"]
+            },
+            {
+                id: "australian-shepherd",
+                name: "Australian Shepherd",
+                species: "dog",
+                wikiTitle: "Australian_Shepherd",
+                height: "46 - 58 cm",
+                heightMax: 58,
+                weight: "18 - 29 kg",
+                lifespan: "12 - 15 años",
+                sizeCategory: "Mediano",
+                energyLabel: "Muy Alta",
+                colors: ["Mirlo Azul (Blue Merle)", "Negro Tricolor", "Mirlo Rojo (Red Merle)", "Rojo Tricolor"],
+                scores: { apartment: 2, novice: 3, kids: 4, pets: 4, energy: 5, training: 5, barking: 3, grooming: 4 },
+                desc: "Perro pastor altamente inteligente, ágil e hiperactivo. Destaca por su pelaje abundante y deslumbrantes patrones merle.",
+                tip: "Perro de trabajo con altísima inteligencia. Excelente para familias activas, corredores o practicantes de agilidad canina.",
+                rcFormula: "Royal Canin Medium Adult",
+                rcDesc: "Formulado para cubrir las altas exigencias calóricas de perros activos manteniendo su masa muscular y defensas naturales.",
+                kit: ["Juguetes interactivos dispensadores de premios", "Frisbee o pelota de caucho resistente", "Cepillo slicker para manto medio-largo", "Correa larga de entrenamiento"]
+            },
+            {
+                id: "bernese-mountain-dog",
+                name: "Bernese Mountain Dog",
+                species: "dog",
+                wikiTitle: "Bernese_Mountain_Dog",
+                height: "58 - 70 cm",
+                heightMax: 70,
+                weight: "36 - 50 kg",
+                lifespan: "7 - 10 años",
+                sizeCategory: "Gigante",
+                energyLabel: "Moderada",
+                colors: ["Tricolor (Negro, Fuego y Blanco)"],
+                scores: { apartment: 2, novice: 4, kids: 5, pets: 5, energy: 3, training: 4, barking: 2, grooming: 4 },
+                desc: "Gigante suizo de temperamento sumamente dulce, paciente y familiar. Su manto tricolor sedoso lo hace inconfundible.",
+                tip: "Gigante bonachón de temperamento afectuoso y pacífico. Ideal para familias con espacio suficiente y clima templado.",
+                rcFormula: "Royal Canin Giant Adult",
+                rcDesc: "Enriquecido con glucosamina y condroitina para proteger sus articulaciones sometidas a gran peso y cuidar su corazón.",
+                kit: ["Cama ortopédica tamaño XL", "Cepillo rastrillo para subpelo denso", "Tapete refrescante para verano", "Comedero grande antideslizante"]
+            },
+            {
+                id: "border-aussie",
+                name: "Border Aussie",
+                species: "dog",
+                wikiTitle: "Border_Collie",
+                height: "48 - 56 cm",
+                heightMax: 56,
+                weight: "16 - 25 kg",
+                lifespan: "12 - 15 años",
+                sizeCategory: "Mediano",
+                energyLabel: "Muy Alta",
+                colors: ["Mirlo Azul", "Negro y Blanco", "Tricolor", "Chocolate y Blanco"],
+                scores: { apartment: 2, novice: 3, kids: 4, pets: 4, energy: 5, training: 5, barking: 3, grooming: 4 },
+                desc: "Cruce de Border Collie y Pastor Australiano. Combina velocidad, inteligencia sobresaliente y un vínculo muy estrecho con su guía.",
+                tip: "Híbrido de alta agilidad mental. Requiere estímulo cognitivo diario y ejercicio regular para prevenir el aburrimiento.",
+                rcFormula: "Royal Canin Medium Adult",
+                rcDesc: "Aporte energético balanceado con antioxidantes y ácidos grasos Omega-3 para potenciar su rendimiento físico y mental.",
+                kit: ["Rompecabezas caninos nivel avanzado", "Pelota interactiva", "Arnés ergonómico deportivo", "Cepillo de cerdas mixtas"]
+            },
+            {
+                id: "border-collie",
+                name: "Border Collie",
+                species: "dog",
+                wikiTitle: "Border_Collie",
+                height: "46 - 56 cm",
+                heightMax: 56,
+                weight: "14 - 20 kg",
+                lifespan: "12 - 15 años",
+                sizeCategory: "Mediano",
+                energyLabel: "Muy Alta",
+                colors: ["Negro y Blanco", "Mirlo Azul", "Rojo y Blanco", "Tricolor"],
+                scores: { apartment: 2, novice: 2, kids: 4, pets: 4, energy: 5, training: 5, barking: 3, grooming: 3 },
+                desc: "Considerada la raza canina más inteligente del mundo. Incansable, atlético y con una capacidad de aprendizaje asombrosa.",
+                tip: "Ideal para tutores comprometidos con el entrenamiento diario, juegos de olfato y actividad física estructurada.",
+                rcFormula: "Royal Canin Medium Adult",
+                rcDesc: "Balance preciso de ácidos grasos Omega 3 (EPA/DHA) para apoyar la salud de la piel, pelaje y vitalidad diaria.",
+                kit: ["Clicker y bolsa para premios de entrenamiento", "Juguetes de cobro resistentes", "Tapete olfativo", "Cepillo deslanador"]
+            },
+            {
+                id: "british-longhair",
+                name: "British Longhair",
+                species: "cat",
+                wikiTitle: "British_Longhair",
+                height: "28 - 32 cm",
+                heightMax: 32,
+                weight: "4 - 8 kg",
+                lifespan: "12 - 17 años",
+                sizeCategory: "Mediano",
+                energyLabel: "Baja-Moderada",
+                colors: ["Azul Británico", "Blanco", "Crema", "Plateado Sombreado", "Golden"],
+                scores: { apartment: 5, novice: 5, kids: 4, pets: 4, energy: 2, training: 3, barking: 1, grooming: 5 },
+                desc: "Felino de aspecto de oso de peluche con manto semilargo denso, ojos grandes y carácter sereno y afectuoso.",
+                tip: "Felino tranquilo que se adapta de maravilla a departamentos. Requiere cepillado 3 veces por semana para evitar nudos.",
+                rcFormula: "Royal Canin British Shorthair Adult / Hairball Care",
+                rcDesc: "Croqueta adaptada a su mandíbula ancha y fórmula con fibras específicas para facilitar la eliminación de bolas de pelo.",
+                kit: ["Carda suave para gato de pelo largo", "Malta o premios anti-bolas de pelo", "Arenero amplio cubierto", "Rascador tipo torre estable"]
+            },
+            {
+                id: "british-shorthair",
+                name: "British Shorthair",
+                species: "cat",
+                wikiTitle: "British_Shorthair",
+                height: "26 - 30 cm",
+                heightMax: 30,
+                weight: "4 - 7.5 kg",
+                lifespan: "12 - 17 años",
+                sizeCategory: "Mediano",
+                energyLabel: "Baja-Moderada",
+                colors: ["Azul Clásico", "Negro", "Crema", "Tabby Plateado", "Colorpoint"],
+                scores: { apartment: 5, novice: 5, kids: 4, pets: 4, energy: 2, training: 3, barking: 1, grooming: 2 },
+                desc: "Gato robusto de mejillas redondeadas y pelaje corto y afelpado. Destaca por su temperamento equilibrado y silencioso.",
+                tip: "Ideal para clientes que buscan un gato cariñoso, paciente y poco demandante que disfrute la vida tranquila en interior.",
+                rcFormula: "Royal Canin British Shorthair Adult",
+                rcDesc: "Favorece el mantenimiento de su masa muscular robusta y protege la función cardíaca y urinaria con minerales balanceados.",
+                kit: ["Guante cepillo de goma", "Rascador de sisal vertical", "Fuente de agua circulante", "Cama tipo cueva acolchada"]
+            },
+            {
+                id: "bulldog-ingles",
+                name: "Bulldog Inglés",
+                species: "dog",
+                wikiTitle: "Bulldog",
+                height: "31 - 40 cm",
+                heightMax: 40,
+                weight: "18 - 25 kg",
+                lifespan: "8 - 10 años",
+                sizeCategory: "Mediano",
+                energyLabel: "Baja",
+                colors: ["Atigrado y Blanco", "Bayo (Fawn)", "Blanco", "Rojo y Blanco"],
+                scores: { apartment: 5, novice: 4, kids: 5, pets: 4, energy: 2, training: 2, barking: 2, grooming: 3 },
+                desc: "Perro compacto, musculoso y de carácter sumamente dócil y hogareño. Famoso por su expresión noble y tranquila.",
+                tip: "Braquicefálico de temperamento calmado. Es vital evitar golpes de calor y limpiar sus pliegues faciales regularmente.",
+                rcFormula: "Royal Canin Bulldog Adult",
+                rcDesc: "Croqueta exclusiva en forma de ola que facilita la prensión braquicéfala y reduce la fermentación intestinal.",
+                kit: ["Toallitas limpiadoras para pliegues faciales", "Arnés acolchado en pecho (no collar)", "Tapete refrescante", "Comedero antivoracidad"]
+            },
+            {
+                id: "cavalier-king-charles",
+                name: "Cavalier King Charles Spaniel",
+                species: "dog",
+                wikiTitle: "Cavalier_King_Charles_Spaniel",
+                height: "30 - 33 cm",
+                heightMax: 33,
+                weight: "5.5 - 8 kg",
+                lifespan: "12 - 14 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Moderada",
+                colors: ["Blenheim (Castaño y Blanco)", "Tricolor", "Ruby", "Black & Tan"],
+                scores: { apartment: 5, novice: 5, kids: 5, pets: 5, energy: 3, training: 4, barking: 2, grooming: 3 },
+                desc: "Perro de compañía aristocrático, extremadamente dulce, sociable y adaptable a cualquier estilo de vida.",
+                tip: "Compañero sumamente empático y silencioso. Destaca por su excelente relación con niños pequeños y adultos mayores.",
+                rcFormula: "Royal Canin Cavalier King Charles Adult",
+                rcDesc: "Fórmula adaptada con nutrientes cardíacos clave como taurina, L-carnitina, EPA/DHA y antioxidantes específicos.",
+                kit: ["Cepillo suave de cerdas naturales", "Comedero estrecho para orejas largas", "Arnés suave tipo chaleco", "Cama ortopédica acogedora"]
+            },
+            {
+                id: "chihuahua",
+                name: "Chihuahua",
+                species: "dog",
+                wikiTitle: "Chihuahua_(dog)",
+                height: "15 - 23 cm",
+                heightMax: 23,
+                weight: "1.5 - 3 kg",
+                lifespan: "12 - 20 años",
+                sizeCategory: "Toy",
+                energyLabel: "Moderada",
+                colors: ["Leonado (Fawn)", "Negro y Fuego", "Chocolate", "Blanco", "Crema"],
+                scores: { apartment: 5, novice: 4, kids: 3, pets: 3, energy: 3, training: 3, barking: 4, grooming: 1 },
+                desc: "La raza de perro más pequeña del mundo. Vivaz, alerta, valiente y profundamente apegado a su dueño.",
+                tip: "Tamaño ultracompacto y gran longevidad. Recomiende socialización temprana y ropa térmica para días fríos.",
+                rcFormula: "Royal Canin Chihuahua Adult",
+                rcDesc: "Mini croqueta altamente palatable que satisface apetitos caprichosos y ayuda a reducir la formación de sarro.",
+                kit: ["Arnés XS acolchado", "Suéter térmico para clima fresco", "Transportadora ligera", "Premios dentales tamaño mini"]
+            },
+            {
+                id: "chihuahua-long-hair",
+                name: "Chihuahua Long Hair",
+                species: "dog",
+                wikiTitle: "Chihuahua_(dog)",
+                height: "15 - 23 cm",
+                heightMax: 23,
+                weight: "1.5 - 3 kg",
+                lifespan: "12 - 20 años",
+                sizeCategory: "Toy",
+                energyLabel: "Moderada",
+                colors: ["Crema", "Marrón Fuego", "Tricolor", "Blanco y Dorado", "Azul"],
+                scores: { apartment: 5, novice: 4, kids: 3, pets: 3, energy: 3, training: 3, barking: 4, grooming: 3 },
+                desc: "Variedad de pelo largo y sedoso con flecos elegantes en orejas y cola. Mantiene el espíritu alerta y devoto de la raza.",
+                tip: "Requiere cepillado suave 2 veces por semana para mantener el brillo de sus flecos sin nudos.",
+                rcFormula: "Royal Canin Chihuahua Adult",
+                rcDesc: "Nutrientes seleccionados que fortalecen la barrera cutánea y aportan suavidad y brillo al pelaje largo.",
+                kit: ["Peine metálico fino de puntas redondeadas", "Arnés XS suave", "Cama tipo nido", "Shampoo hidratante suave"]
+            },
+            {
+                id: "chow-chow",
+                name: "Chow Chow",
+                species: "dog",
+                wikiTitle: "Chow_Chow",
+                height: "46 - 56 cm",
+                heightMax: 56,
+                weight: "20 - 32 kg",
+                lifespan: "9 - 15 años",
+                sizeCategory: "Mediano",
+                energyLabel: "Baja",
+                colors: ["Rojo León", "Negro", "Azul", "Crema", "Canela"],
+                scores: { apartment: 4, novice: 2, kids: 3, pets: 2, energy: 2, training: 2, barking: 2, grooming: 5 },
+                desc: "Perro ancestral chino famoso por su melena de león, lengua negro-azulada y temperamento independiente y tranquilo.",
+                tip: "Carácter digno y silencioso, muy limpio en casa. Requiere socialización temprana y cepillado profundo regular.",
+                rcFormula: "Royal Canin Medium Adult / Dermacomfort",
+                rcDesc: "Fórmula de protección cutánea con ácidos grasos esenciales para respaldar su densa doble capa de pelo.",
+                kit: ["Carda metálica de púas largas", "Peine deslanador", "Arnés reforzado", "Tapete refrescante"]
+            },
+            {
+                id: "cockapoo",
+                name: "Cockapoo",
+                species: "dog",
+                wikiTitle: "Cockapoo",
+                height: "25 - 38 cm",
+                heightMax: 38,
+                weight: "6 - 11 kg",
+                lifespan: "12 - 15 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Alta",
+                colors: ["Dorado", "Albaricoque", "Negro", "Chocolate", "Particolor"],
+                scores: { apartment: 5, novice: 5, kids: 5, pets: 5, energy: 4, training: 5, barking: 2, grooming: 4 },
+                desc: "Cruce de Cocker Spaniel y Poodle. Alegres, cariñosos, muy fáciles de entrenar y con manto ondulado de baja muda.",
+                tip: "Excelente opción familiar por su carácter extrovertido y baja caída de pelo; requiere estética canina periódica.",
+                rcFormula: "Royal Canin Mini Adult",
+                rcDesc: "Cuidado de la barrera epidérmica y mantenimiento del peso ideal para perros pequeños de energía dinámica.",
+                kit: ["Carda suave para rizos", "Limpiador ótico suave", "Juguetes interactivos", "Arnés ergonómico"]
+            },
+            {
+                id: "cocker-spaniel",
+                name: "Cocker Spaniel",
+                species: "dog",
+                wikiTitle: "English_Cocker_Spaniel",
+                height: "38 - 41 cm",
+                heightMax: 41,
+                weight: "12 - 15 kg",
+                lifespan: "12 - 14 años",
+                sizeCategory: "Mediano",
+                energyLabel: "Alta",
+                colors: ["Dorado", "Negro", "Ruano Azul", "Chocolate", "Particolor"],
+                scores: { apartment: 4, novice: 4, kids: 5, pets: 5, energy: 4, training: 4, barking: 3, grooming: 4 },
+                desc: "Perro alegre, juguetón y de mirada expresiva con largas orejas sedosas. Gran compañero para familias activas.",
+                tip: "Destaca por su alegría constante. Recomiende limpieza preventiva de oídos y cepillado regular de sus flecos.",
+                rcFormula: "Royal Canin Cocker Adult",
+                rcDesc: "Nutrientes específicos con EPA/DHA y aceite de borraja que benefician la salud auricular, la piel y el brillo del pelo.",
+                kit: ["Solución limpiadora auricular", "Comedero estrecho para orejas largas", "Cepillo de cerdas suaves", "Pelota resistente para paseos"]
+            },
+            {
+                id: "dachshund",
+                name: "Dachshund (Teckel)",
+                species: "dog",
+                wikiTitle: "Dachshund",
+                height: "20 - 27 cm",
+                heightMax: 27,
+                weight: "5 - 9 kg",
+                lifespan: "12 - 16 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Moderada",
+                colors: ["Rojo", "Negro y Fuego", "Arlequín (Dapple)", "Chocolate y Fuego"],
+                scores: { apartment: 5, novice: 4, kids: 4, pets: 3, energy: 3, training: 3, barking: 4, grooming: 2 },
+                desc: "El icónico perro salchicha de pelo corto. Curioso, valiente, juguetón y de pelaje muy fácil de mantener.",
+                tip: "Muy popular en departamentos. Indique al cliente evitar saltos desde muebles altos y mantener su peso bajo control.",
+                rcFormula: "Royal Canin Dachshund Adult",
+                rcDesc: "Aporte equilibrado de calcio y fósforo que protege las articulaciones y la estructura de su columna alargada.",
+                kit: ["Rampa acolchada para cama o sofá", "Arnés anatómico en Y", "Juguete dispensador de croquetas", "Guante de masaje para pelo corto"]
+            },
+            {
+                id: "dachshund-long-hair",
+                name: "Dachshund Long Hair",
+                species: "dog",
+                wikiTitle: "Dachshund",
+                height: "20 - 27 cm",
+                heightMax: 27,
+                weight: "5 - 9 kg",
+                lifespan: "12 - 16 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Moderada",
+                colors: ["Rojo Caoba", "Negro y Fuego", "Chocolate", "Crema Sombreado"],
+                scores: { apartment: 5, novice: 4, kids: 4, pets: 4, energy: 3, training: 3, barking: 3, grooming: 3 },
+                desc: "Variedad de pelo largo sedoso y ondulado en orejas, pecho y cola. Suele tener un temperamento aún más dulce y calmo.",
+                tip: "Combina el tamaño práctico del Teckel con un pelaje elegante y suave. Ideal para hogares tranquilos o familiares.",
+                rcFormula: "Royal Canin Dachshund Adult",
+                rcDesc: "Mantiene la tonicidad muscular y protege la columna mientras nutre el brillo y sedosidad de su pelaje largo.",
+                kit: ["Rampa para muebles", "Cepillo de cerdas suaves", "Arnés ergonómico", "Premios bajos en calorías"]
+            },
+            {
+                id: "fluffy-bulldog",
+                name: "Fluffy Bulldog",
+                species: "dog",
+                wikiTitle: "French_Bulldog",
+                height: "30 - 35 cm",
+                heightMax: 35,
+                weight: "11 - 14 kg",
+                lifespan: "10 - 12 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Baja",
+                colors: ["Isabella", "Fluffy Blue", "Lilac Fawn", "Merle", "Crema"],
+                scores: { apartment: 5, novice: 4, kids: 5, pets: 4, energy: 2, training: 3, barking: 2, grooming: 4 },
+                desc: "Exclusiva variación de Bulldog Francés portadora del gen de pelo largo. Apariencia de peluche esponjoso y carácter muy afectuoso.",
+                tip: "Ejemplar muy llamativo y hogareño. Requiere cepillado suave 3 veces por semana y cuidados térmicos en días calurosos.",
+                rcFormula: "Royal Canin French Bulldog Adult",
+                rcDesc: "Proteínas de altísima digestibilidad (L.I.P.) y ácidos grasos que mantienen el pelaje esponjoso y la piel sana.",
+                kit: ["Carda suave de puntas protegidas", "Arnés acolchado en pecho", "Tapete refrescante", "Toallitas para pliegues"]
+            },
+            {
+                id: "french-bulldog",
+                name: "French Bulldog",
+                species: "dog",
+                wikiTitle: "French_Bulldog",
+                height: "30 - 35 cm",
+                heightMax: 35,
+                weight: "9 - 14 kg",
+                lifespan: "10 - 12 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Baja",
+                colors: ["Fawn (Leonado)", "Atigrado", "Pied (Vaca)", "Crema", "Negro"],
+                scores: { apartment: 5, novice: 5, kids: 5, pets: 4, energy: 2, training: 3, barking: 2, grooming: 1 },
+                desc: "El rey del departamento moderno. Compacto, gracioso, silencioso y extremadamente apegado a su familia.",
+                tip: "Raza estrella para vida urbana: no ladra sin motivo, requiere paseos cortos y disfruta de la compañía humana.",
+                rcFormula: "Royal Canin French Bulldog Adult",
+                rcDesc: "Croqueta ergonómica en forma de media luna para mandíbula braquicéfala y fórmula que reduce gases digestivos.",
+                kit: ["Arnés de pecho acolchado", "Limpiador de pliegues faciales", "Comedero elevado inclinado", "Mordedera resistente"]
+            },
+            {
+                id: "french-bulldog-big-rope",
+                name: "French Bulldog Big Rope",
+                species: "dog",
+                wikiTitle: "French_Bulldog",
+                height: "30 - 35 cm",
+                heightMax: 35,
+                weight: "10 - 14 kg",
+                lifespan: "10 - 12 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Baja",
+                colors: ["Lilac Tan", "Chocolate", "Blue", "Cream Big Rope", "Isabella"],
+                scores: { apartment: 5, novice: 4, kids: 5, pets: 4, energy: 2, training: 3, barking: 2, grooming: 3 },
+                desc: "Variedad exótica caracterizada por un pliegue nasal continuo y pronunciado sobre la trufa y estructura compacta.",
+                tip: "Enfatice la limpieza y secado diario del pliegue nasal con toallitas especiales para mantener la piel impecable.",
+                rcFormula: "Royal Canin French Bulldog Adult",
+                rcDesc: "Refuerza la barrera cutánea con complejo exclusivo de vitaminas y aminoácidos, cuidando pliegues y musculatura.",
+                kit: ["Bálsamo protector de trufa y pliegues", "Toallitas hipoalergénicas", "Arnés ergonómico", "Tapete refrescante"]
+            },
+            {
+                id: "golden-retriever",
+                name: "Golden Retriever",
+                species: "dog",
+                wikiTitle: "Golden_Retriever",
+                height: "55 - 61 cm",
+                heightMax: 61,
+                weight: "25 - 34 kg",
+                lifespan: "10 - 12 años",
+                sizeCategory: "Grande",
+                energyLabel: "Alta",
+                colors: ["Dorado Clásico", "Dorado Claro (Crema)", "Dorado Oscuro"],
+                scores: { apartment: 3, novice: 5, kids: 5, pets: 5, energy: 4, training: 5, barking: 2, grooming: 4 },
+                desc: "El perro familiar por excelencia. Amigable, confiable, paciente con los niños y sumamente fácil de educar.",
+                tip: "Ideal para familias con niños o dueños primerizos que buscan un compañero noble, juguetón y obediente.",
+                rcFormula: "Royal Canin Golden Retriever Adult",
+                rcDesc: "Enriquecido con taurina y EPA/DHA para salud cardíaca, control de peso y brillo de su manto dorado.",
+                kit: ["Cepillo deslanador para doble capa", "Pelotas y juguetes de cobro", "Cama grande acolchada", "Correa resistente acolchada"]
+            },
+            {
+                id: "goldendoodle",
+                name: "Goldendoodle",
+                species: "dog",
+                wikiTitle: "Goldendoodle",
+                height: "50 - 63 cm",
+                heightMax: 63,
+                weight: "20 - 30 kg",
+                lifespan: "10 - 14 años",
+                sizeCategory: "Grande",
+                energyLabel: "Alta",
+                colors: ["Dorado", "Albaricoque", "Crema", "Rojo", "Chocolate"],
+                scores: { apartment: 3, novice: 5, kids: 5, pets: 5, energy: 4, training: 5, barking: 2, grooming: 4 },
+                desc: "Cruce de Golden Retriever y Poodle Estándar. Combina la dulzura del Golden con un pelaje rizado de muy baja muda.",
+                tip: "Muy solicitado por familias que buscan un perro grande, sociable e hipoalergénico; requiere estética cada 6-8 semanas.",
+                rcFormula: "Royal Canin Maxi Adult",
+                rcDesc: "Promueve digestibilidad óptima, soporte articular y nutrientes esenciales para mantener sus rizos suaves y sanos.",
+                kit: ["Carda de púas largas para rizos", "Peine metálico", "Juguetes interactivos", "Arnés antitirones"]
+            },
+            {
+                id: "jack-russell-terrier",
+                name: "Jack Russell Terrier",
+                species: "dog",
+                wikiTitle: "Jack_Russell_Terrier",
+                height: "25 - 30 cm",
+                heightMax: 30,
+                weight: "5 - 8 kg",
+                lifespan: "12 - 16 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Muy Alta",
+                colors: ["Blanco con Manchas Tan", "Blanco con Negro y Fuego", "Blanco y Negro"],
+                scores: { apartment: 3, novice: 3, kids: 4, pets: 3, energy: 5, training: 4, barking: 4, grooming: 2 },
+                desc: "Un perro grande en cuerpo pequeño. Intrépido, ágil, inteligente y lleno de vitalidad para jugar durante horas.",
+                tip: "Perfecto para personas dinámicas que buscan un perro pequeño pero atlético y siempre listo para la aventura.",
+                rcFormula: "Royal Canin Jack Russell Terrier Adult",
+                rcDesc: "Contenido proteico adaptado para mantener su masa muscular magra y complejo antioxidante para su vitalidad.",
+                kit: ["Pelotas ultra resistentes", "Juguete de tira y afloja", "Tapete olfativo", "Guante de cepillado"]
+            },
+            {
+                id: "lhasa-apso",
+                name: "Lhasa Apso",
+                species: "dog",
+                wikiTitle: "Lhasa_Apso",
+                height: "25 - 28 cm",
+                heightMax: 28,
+                weight: "5 - 8 kg",
+                lifespan: "12 - 15 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Baja-Moderada",
+                colors: ["Dorado", "Miel", "Arena", "Gris Pizarra", "Blanco y Dorado"],
+                scores: { apartment: 5, novice: 4, kids: 4, pets: 4, energy: 2, training: 3, barking: 3, grooming: 5 },
+                desc: "Antiguo perro centinela de monasterios tibetanos. Pequeño, longevo, independiente y con un manto largo espectacular.",
+                tip: "Excelente perro de departamento con bajo requerimiento de ejercicio. Ideal para corte tipo cachorro si se busca practicidad.",
+                rcFormula: "Royal Canin Mini Adult",
+                rcDesc: "Enriquecido con EPA/DHA para nutrir su largo pelaje y quelantes de calcio para cuidar su salud dental.",
+                kit: ["Cepillo de mantequilla (pin brush)", "Peine metálico", "Acondicionador desenredante", "Cama acogedora"]
+            },
+            {
+                id: "maine-coon",
+                name: "Maine Coon",
+                species: "cat",
+                wikiTitle: "Maine_Coon",
+                height: "30 - 40 cm",
+                heightMax: 40,
+                weight: "6 - 11 kg",
+                lifespan: "12 - 15 años",
+                sizeCategory: "Grande",
+                energyLabel: "Moderada",
+                colors: ["Brown Tabby", "Silver Tabby", "Rojo (Red)", "Negro", "Tortie"],
+                scores: { apartment: 4, novice: 5, kids: 5, pets: 5, energy: 3, training: 4, barking: 2, grooming: 4 },
+                desc: "El gigante gentil del mundo felino. Conocido por su gran tamaño, pinceles en las orejas y carácter sociablemente canino.",
+                tip: "Fascina a los clientes por su porte majestuoso y carácter juguetón que incluso disfruta seguir a sus dueños por casa.",
+                rcFormula: "Royal Canin Maine Coon Adult",
+                rcDesc: "Croqueta tamaño King Size diseñada para su mandíbula cuadrada, con soporte articular y taurina para su corazón.",
+                kit: ["Rascador gigante de base pesada", "Arenero tamaño XXL", "Carda para pelo semilargo", "Caña interactiva con plumas"]
+            },
+            {
+                id: "maltese",
+                name: "Maltese (Maltés)",
+                species: "dog",
+                wikiTitle: "Maltese_dog",
+                height: "20 - 25 cm",
+                heightMax: 25,
+                weight: "3 - 4 kg",
+                lifespan: "12 - 15 años",
+                sizeCategory: "Toy",
+                energyLabel: "Moderada",
+                colors: ["Blanco Puro"],
+                scores: { apartment: 5, novice: 5, kids: 4, pets: 4, energy: 3, training: 4, barking: 3, grooming: 5 },
+                desc: "Elegante perro de compañía de manto blanco sedoso. No tiene subpelo, por lo que apenas suelta pelo en casa.",
+                tip: "Muy apreciado por personas con alergias leves y amantes de perros pequeños elegantes y cariñosos.",
+                rcFormula: "Royal Canin Maltese Adult",
+                rcDesc: "Ácidos grasos Omega 3 y 6 que preservan el blanco puro y sedoso del manto, además de reducir el olor de las heces.",
+                kit: ["Limpiador de lagrimales", "Cepillo suave de cerdas", "Arnés ligero", "Cama tipo nido suave"]
+            },
+            {
+                id: "maltipoo",
+                name: "Maltipoo",
+                species: "dog",
+                wikiTitle: "Maltipoo",
+                height: "20 - 30 cm",
+                heightMax: 30,
+                weight: "3 - 6 kg",
+                lifespan: "12 - 15 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Moderada",
+                colors: ["Crema", "Blanco", "Albaricoque", "Champagne"],
+                scores: { apartment: 5, novice: 5, kids: 5, pets: 5, energy: 3, training: 4, barking: 2, grooming: 4 },
+                desc: "Encantador cruce de Bichón Maltés y Poodle Toy. Tierno, juguetón, inteligente y de pelaje esponjoso que no muda.",
+                tip: "Uno de los favoritos para departamento y familias primerizas por su tamaño manejable y temperamento afectuoso.",
+                rcFormula: "Royal Canin Mini Adult",
+                rcDesc: "Alta palatabilidad para paladares exigentes y nutrientes que mantienen la suavidad de su manto ondulado.",
+                kit: ["Carda suave pequeña", "Arnés tipo chaleco", "Juguetes de peluche pequeños", "Premios dentales mini"]
+            },
+            {
+                id: "mini-bernedoodle",
+                name: "Mini Bernedoodle",
+                species: "dog",
+                wikiTitle: "Bernese_Mountain_Dog",
+                height: "45 - 52 cm",
+                heightMax: 52,
+                weight: "12 - 22 kg",
+                lifespan: "12 - 15 años",
+                sizeCategory: "Mediano",
+                energyLabel: "Moderada",
+                colors: ["Tricolor (Negro, Blanco y Fuego)", "Mirlo Tricolor", "Negro y Blanco"],
+                scores: { apartment: 4, novice: 5, kids: 5, pets: 5, energy: 3, training: 4, barking: 2, grooming: 4 },
+                desc: "Versión mediana del Bernedoodle. Combina los colores y dulzura del Boyero de Berna con el pelaje rizado de baja muda del Poodle.",
+                tip: "Ofrece la estética de un perro de montaña en un tamaño mucho más práctico para hogares urbanos.",
+                rcFormula: "Royal Canin Medium Adult",
+                rcDesc: "Balance nutricional que protege sus articulaciones y mantiene su pelaje rizado brillante y saludable.",
+                kit: ["Carda para pelaje rizado", "Arnés acolchado", "Cama mediana ortopédica", "Juguetes interactivos"]
+            },
+            {
+                id: "mini-goldendoodle",
+                name: "Mini Goldendoodle",
+                species: "dog",
+                wikiTitle: "Goldendoodle",
+                height: "35 - 45 cm",
+                heightMax: 45,
+                weight: "9 - 15 kg",
+                lifespan: "12 - 16 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Alta",
+                colors: ["Dorado Miel", "Albaricoque", "Crema", "Rojo"],
+                scores: { apartment: 4, novice: 5, kids: 5, pets: 5, energy: 4, training: 5, barking: 2, grooming: 4 },
+                desc: "Aspecto de osito de peluche en formato compacto. Alegre, muy sociable con niños y otras mascotas, y de baja caída de pelo.",
+                tip: "Ideal para quienes aman al Golden Retriever pero buscan un tamaño más compacto y pelaje hipoalergénico.",
+                rcFormula: "Royal Canin Mini Adult",
+                rcDesc: "Enriquecido con EPA-DHA para cuidar la piel sensible bajo rizos y mantener su energía diaria.",
+                kit: ["Carda suave", "Peine metálico", "Arnés ergonómico", "Pelotas suaves de interior"]
+            },
+            {
+                id: "mini-labradoodle",
+                name: "Mini Labradoodle",
+                species: "dog",
+                wikiTitle: "Labradoodle",
+                height: "35 - 42 cm",
+                heightMax: 42,
+                weight: "8 - 14 kg",
+                lifespan: "12 - 15 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Alta",
+                colors: ["Chocolate", "Caramelo", "Crema", "Negro"],
+                scores: { apartment: 4, novice: 5, kids: 5, pets: 5, energy: 4, training: 5, barking: 2, grooming: 3 },
+                desc: "Cruce de Labrador Retriever y Poodle Miniatura. Inteligente, extrovertido, fácil de adiestrar y muy familiar.",
+                tip: "Excelente compañero para niños y familias activas que desean un perro obediente y de manto práctico.",
+                rcFormula: "Royal Canin Mini Adult",
+                rcDesc: "Proteínas L.I.P. de alta digestibilidad y prebióticos para una digestión saludable y vitalidad constante.",
+                kit: ["Cepillo slicker", "Juguetes de inteligencia", "Correa y arnés", "Premios de entrenamiento"]
+            },
+            {
+                id: "pembroke-welsh-corgi",
+                name: "Pembroke Welsh Corgi",
+                species: "dog",
+                wikiTitle: "Pembroke_Welsh_Corgi",
+                height: "25 - 30 cm",
+                heightMax: 30,
+                weight: "10 - 14 kg",
+                lifespan: "12 - 15 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Alta",
+                colors: ["Rojo y Blanco", "Tricolor", "Sable", "Fawn"],
+                scores: { apartment: 4, novice: 4, kids: 4, pets: 4, energy: 4, training: 5, barking: 3, grooming: 3 },
+                desc: "Perro pastor británico de patas cortas, orejas erguidas y sonrisa inconfundible. Inteligente, activo y lleno de carisma.",
+                tip: "Muy inteligente y entrenable. Recomiende controlar las porciones de alimento para cuidar su espalda.",
+                rcFormula: "Royal Canin Medium Adult / Mini Adult",
+                rcDesc: "Control preciso del aporte calórico y L-carnitina para mantener un peso saludable y proteger su columna.",
+                kit: ["Cepillo deslanador para muda", "Comedero antivoracidad", "Juguetes de pastoreo/pelotas", "Arnés ergonómico"]
+            },
+            {
+                id: "persian",
+                name: "Persa (Persian)",
+                species: "cat",
+                wikiTitle: "Persian_cat",
+                height: "24 - 28 cm",
+                heightMax: 28,
+                weight: "3.5 - 6.5 kg",
+                lifespan: "12 - 17 años",
+                sizeCategory: "Mediano",
+                energyLabel: "Baja",
+                colors: ["Blanco", "Chinchilla Plateado", "Negro", "Azul", "Red Tabby"],
+                scores: { apartment: 5, novice: 4, kids: 4, pets: 4, energy: 1, training: 2, barking: 1, grooming: 5 },
+                desc: "Sinónimo de elegancia y serenidad felina. Rostro chato expresivo, manto largo exuberante y carácter sumamente tranquilo.",
+                tip: "Ideal para hogares calmados y departamentos. Requiere cepillado diario y limpieza suave alrededor de los ojos.",
+                rcFormula: "Royal Canin Persian Adult",
+                rcDesc: "Croqueta en forma de almendra diseñada para prensión sublingual braquicéfala y fibras contra bolas de pelo.",
+                kit: ["Peine metálico de dientes anchos", "Toallitas oculares suaves", "Comedero plano y ancho", "Pasta de malta"]
+            },
+            {
+                id: "pomeranian",
+                name: "Pomeranian (Pomerania)",
+                species: "dog",
+                wikiTitle: "Pomeranian",
+                height: "18 - 24 cm",
+                heightMax: 24,
+                weight: "1.8 - 3.5 kg",
+                lifespan: "12 - 16 años",
+                sizeCategory: "Toy",
+                energyLabel: "Moderada",
+                colors: ["Naranja", "Crema", "Blanco", "Negro", "Sable", "Blue Merle"],
+                scores: { apartment: 5, novice: 4, kids: 3, pets: 4, energy: 3, training: 4, barking: 4, grooming: 4 },
+                desc: "Pequeño spitz de melena esponjosa y expresión de zorrito. Vivaz, extrovertido, inteligente y muy leal.",
+                tip: "Enfatice el cepillado desde raíz hacia afuera para mantener su volumen esponjoso sin rapar nunca su doble capa.",
+                rcFormula: "Royal Canin Pomeranian Adult",
+                rcDesc: "Fórmula exclusiva que protege las articulaciones de sus patas pequeñas y nutre la piel bajo su denso pelaje.",
+                kit: ["Carda suave de púas largas", "Arnés tipo chaleco (protege tráquea)", "Premios dentales mini", "Cama acogedora"]
+            },
+            {
+                id: "pomsky",
+                name: "Pomsky",
+                species: "dog",
+                wikiTitle: "Pomsky",
+                height: "25 - 38 cm",
+                heightMax: 38,
+                weight: "7 - 12 kg",
+                lifespan: "12 - 15 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Alta",
+                colors: ["Gris Lobo y Blanco", "Negro y Blanco", "Rojo y Blanco", "Mirlo"],
+                scores: { apartment: 4, novice: 3, kids: 4, pets: 4, energy: 4, training: 3, barking: 3, grooming: 4 },
+                desc: "Cruce de Pomerania y Husky Siberiano. Conserva la apariencia de un pequeño lobo ártico en un tamaño compacto y manejable.",
+                tip: "Muy atractivo por sus marcas faciales tipo Husky y ojos expresivos en formato pequeño-mediano.",
+                rcFormula: "Royal Canin Mini Adult",
+                rcDesc: "Optimiza la calidad de su doble manto con ácidos grasos esenciales y aporta energía balanceada.",
+                kit: ["Cepillo deslanador", "Arnés antitirones", "Juguetes interactivos", "Tapete refrescante"]
+            },
+            {
+                id: "ragdoll",
+                name: "Ragdoll",
+                species: "cat",
+                wikiTitle: "Ragdoll",
+                height: "26 - 32 cm",
+                heightMax: 32,
+                weight: "4.5 - 9 kg",
+                lifespan: "12 - 17 años",
+                sizeCategory: "Grande",
+                energyLabel: "Baja",
+                colors: ["Seal Point", "Blue Point", "Chocolate Bicolor", "Lynx Point"],
+                scores: { apartment: 5, novice: 5, kids: 5, pets: 5, energy: 1, training: 3, barking: 1, grooming: 3 },
+                desc: "Gato de ojos azul zafiro y manto semilargo sedoso. Famoso por relajarse por completo al ser cargado en brazos.",
+                tip: "Considerado el gato más dócil y familiar; ideal para hogares con niños que desean un felino muy cariñoso.",
+                rcFormula: "Royal Canin Ragdoll Adult",
+                rcDesc: "Enriquecido con taurina, EPA y DHA para proteger su función cardíaca, articulaciones y sedosidad del pelaje.",
+                kit: ["Peine metálico suave", "Rascador horizontal y vertical", "Arenero amplio", "Fuente de agua"]
+            },
+            {
+                id: "scottish-straight",
+                name: "Scottish Straight",
+                species: "cat",
+                wikiTitle: "Scottish_Fold",
+                height: "25 - 30 cm",
+                heightMax: 30,
+                weight: "3.5 - 6 kg",
+                lifespan: "12 - 15 años",
+                sizeCategory: "Mediano",
+                energyLabel: "Baja-Moderada",
+                colors: ["Azul", "Silver Tabby", "Golden", "Blanco", "Crema"],
+                scores: { apartment: 5, novice: 5, kids: 4, pets: 4, energy: 2, training: 3, barking: 1, grooming: 2 },
+                desc: "Variedad de orejas erguidas del Scottish. Posee cabeza redondeada, grandes ojos expresivos y carácter dulce y tranquilo.",
+                tip: "Muy sociable y adaptable a la vida en departamento; disfruta tanto de la compañía como de sus siestas.",
+                rcFormula: "Royal Canin Indoor 27 / British Shorthair Adult",
+                rcDesc: "Control calórico óptimo para gatos de interior, reduciendo el olor de las heces y cuidando el tracto urinario.",
+                kit: ["Cepillo suave de goma", "Rascador con plataforma", "Juguetes con catnip", "Arenero cerrado"]
+            },
+            {
+                id: "shiba-inu",
+                name: "Shiba Inu",
+                species: "dog",
+                wikiTitle: "Shiba_Inu",
+                height: "35 - 42 cm",
+                heightMax: 42,
+                weight: "8 - 11 kg",
+                lifespan: "12 - 15 años",
+                sizeCategory: "Mediano",
+                energyLabel: "Alta",
+                colors: ["Rojo Sésamo con Urajiro", "Negro y Fuego", "Sésamo", "Crema"],
+                scores: { apartment: 4, novice: 3, kids: 3, pets: 3, energy: 4, training: 3, barking: 2, grooming: 3 },
+                desc: "Perro japonés compacto, ágil y sumamente limpio. Posee una personalidad independiente, alerta y muy leal.",
+                tip: "Silencioso en casa y muy pulcro. Recomiende siempre pasearlo con arnés seguro y socializarlo desde cachorro.",
+                rcFormula: "Royal Canin Medium Adult",
+                rcDesc: "Apoya las defensas naturales y mantiene la salud de la piel y el brillo de su doble capa de pelaje.",
+                kit: ["Arnés de seguridad de 3 puntos", "Carda deslanadora", "Juguetes tipo Kong", "Premios de alto valor"]
+            },
+            {
+                id: "shih-tzu",
+                name: "Shih Tzu",
+                species: "dog",
+                wikiTitle: "Shih_Tzu",
+                height: "20 - 28 cm",
+                heightMax: 28,
+                weight: "4 - 7.5 kg",
+                lifespan: "10 - 16 años",
+                sizeCategory: "Pequeño",
+                energyLabel: "Baja",
+                colors: ["Dorado y Blanco", "Negro y Blanco", "Tricolor", "Hígado y Blanco"],
+                scores: { apartment: 5, novice: 5, kids: 5, pets: 5, energy: 2, training: 3, barking: 2, grooming: 5 },
+                desc: "Perro de compañía afectuoso, alegre y adaptable. No suelta pelo y disfruta enormemente de la vida en hogar.",
+                tip: "Uno de los mejores perros para departamento y familias. Puede llevarse con manto largo o corte cachorro práctico.",
+                rcFormula: "Royal Canin Shih Tzu Adult",
+                rcDesc: "Croqueta adaptada a su mandíbula braquicéfala y nutrientes que refuerzan la piel y reducen el sarro dental.",
+                kit: ["Cepillo suave y peine metálico", "Limpiador facial/ocular", "Arnés tipo chaleco", "Cama acogedora"]
+            },
+            {
+                id: "yorkshire-terrier",
+                name: "Yorkshire Terrier",
+                species: "dog",
+                wikiTitle: "Yorkshire_Terrier",
+                height: "18 - 23 cm",
+                heightMax: 23,
+                weight: "2 - 3.2 kg",
+                lifespan: "13 - 16 años",
+                sizeCategory: "Toy",
+                energyLabel: "Moderada-Alta",
+                colors: ["Azul Acero y Fuego", "Negro y Fuego"],
+                scores: { apartment: 5, novice: 4, kids: 3, pets: 4, energy: 4, training: 4, barking: 4, grooming: 5 },
+                desc: "Pequeño terrier elegante de pelaje sedoso similar al cabello humano. Vivaz, valiente, cariñoso y muy longevo.",
+                tip: "Ideal para departamentos y viajes. No muda pelo, pero requiere cepillado frecuente para mantener su brillo sedoso.",
+                rcFormula: "Royal Canin Yorkshire Terrier Adult",
+                rcDesc: "Enriquecido con aceite de borraja y biotina para un manto sedoso, además de alta palatabilidad.",
+                kit: ["Cepillo de cerdas suaves", "Arnés ligero XS", "Premios dentales mini", "Transportadora acolchada"]
+            }
+        ];
+
+        // GLOBAL APPLICATION STATE
+        let currentSpeciesFilter = 'all';
+        let searchQuery = '';
+        let selectedBreedIndex = 0;
+        let selectedCompareIds = [];
+        let activeTabName = 'tab-ficha';
+        const imageCache = {};
+        const aiGeneratedCache = {};
+        let chatMessages = [];
+
+        // INITIALIZATION
+        window.onload = function() {
+            renderGrid();
+            updateCounts();
+            prefetchAllWikipediaImages();
+        };
+
+        // WIKIPEDIA REST API IMAGE LOADER (REAL BREED PHOTOS)
+        async function fetchBreedWikipediaImage(breed) {
+            if (imageCache[breed.id]) return imageCache[breed.id];
+            try {
+                const res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(breed.wikiTitle)}`);
+                if (res.ok) {
+                    const data = await res.json();
+                    const url = (data.originalimage && data.originalimage.source) || (data.thumbnail && data.thumbnail.source);
+                    if (url) {
+                        imageCache[breed.id] = url;
+                        return url;
+                    }
+                }
+            } catch (e) {
+                console.warn("Wikipedia fetch fallback for", breed.name);
+            }
+            const fallback = createFallbackSvg(breed.name);
+            imageCache[breed.id] = fallback;
+            return fallback;
+        }
+
+        async function prefetchAllWikipediaImages() {
+            for (const breed of BREEDS_DATA) {
+                fetchBreedWikipediaImage(breed).then(url => {
+                    const imgEl = document.getElementById(`card-img-${breed.id}`);
+                    if (imgEl && imgEl.src !== url) {
+                        imgEl.src = url;
+                    }
+                    if (BREEDS_DATA[selectedBreedIndex] && BREEDS_DATA[selectedBreedIndex].id === breed.id) {
+                        const fichaImg = document.getElementById('ficha-img');
+                        if (fichaImg && !fichaImg.dataset.loaded) {
+                            fichaImg.src = url;
+                        }
+                    }
+                });
+            }
+        }
+
+        function createFallbackSvg(breedName) {
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600">
+                <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#064e3b"/><stop offset="100%" stop-color="#059669"/>
+                </linearGradient></defs>
+                <rect width="600" height="600" fill="url(#g)"/>
+                <circle cx="300" cy="250" r="95" fill="#10b981" opacity="0.25"/>
+                <text x="300" y="265" font-family="Inter,sans-serif" font-size="64" fill="#ffffff" text-anchor="middle">🐾</text>
+                <text x="300" y="410" font-family="Inter,sans-serif" font-size="26" font-weight="bold" fill="#ffffff" text-anchor="middle">${breedName}</text>
+                <text x="300" y="445" font-family="Inter,sans-serif" font-size="14" fill="#a7f3d0" text-anchor="middle">Petland Guía Visual</text>
+            </svg>`;
+            return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+        }
+
+        function normalizeText(text) {
+            return text.normalize('NFD').replace(/[\u0300-\u036f]/g, "").toLowerCase();
+        }
+
+        function getFilteredBreeds() {
+            return BREEDS_DATA.filter(breed => {
+                const matchesSpecies = (currentSpeciesFilter === 'all') || (breed.species === currentSpeciesFilter);
+                const query = normalizeText(searchQuery);
+                const matchesSearch = query === '' || 
+                    normalizeText(breed.name).includes(query) || 
+                    normalizeText(breed.sizeCategory).includes(query) ||
+                    breed.colors.some(c => normalizeText(c).includes(query));
+                return matchesSpecies && matchesSearch;
+            });
+        }
+
+        function filterSpecies(species) {
+            currentSpeciesFilter = species;
+            document.querySelectorAll('.species-tab').forEach(tab => {
+                tab.className = 'species-tab text-emerald-100 hover:text-white hover:bg-white/10 px-4 py-1.5 rounded-lg text-xs sm:text-sm font-medium flex items-center gap-2 transition whitespace-nowrap';
+            });
+            const activeTab = document.getElementById(`tab-${species}`);
+            if (activeTab) {
+                activeTab.className = 'species-tab active-tab bg-white text-emerald-900 font-bold px-4 py-1.5 rounded-lg text-xs sm:text-sm flex items-center gap-2 shadow-sm transition whitespace-nowrap';
+            }
+            renderGrid();
+        }
+
+        function handleSearch() {
+            const input = document.getElementById('search-input');
+            searchQuery = input.value;
+            const clearBtn = document.getElementById('btn-clear-search');
+            clearBtn.classList.toggle('hidden', searchQuery.length === 0);
+            renderGrid();
+        }
+
+        function clearSearch() {
+            document.getElementById('search-input').value = '';
+            searchQuery = '';
+            document.getElementById('btn-clear-search').classList.add('hidden');
+            renderGrid();
+        }
+
+        function updateCounts() {
+            document.getElementById('count-all').innerText = BREEDS_DATA.length;
+            document.getElementById('count-dog').innerText = BREEDS_DATA.filter(b => b.species === 'dog').length;
+            document.getElementById('count-cat').innerText = BREEDS_DATA.filter(b => b.species === 'cat').length;
+        }
+
+        function renderGrid() {
+            const grid = document.getElementById('breed-grid');
+            const emptyState = document.getElementById('empty-state');
+            const filtered = getFilteredBreeds();
+
+            grid.innerHTML = '';
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                grid.classList.add('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+                grid.classList.remove('hidden');
+            }
+
+            filtered.forEach((breed) => {
+                const globalIdx = BREEDS_DATA.findIndex(b => b.id === breed.id);
+                const isCompared = selectedCompareIds.includes(breed.id);
+                const imgSrc = imageCache[breed.id] || createFallbackSvg(breed.name);
+
+                const card = document.createElement('div');
+                card.className = "bg-white rounded-2xl border border-emerald-200/80 shadow-sm hover:shadow-md hover:border-emerald-400 transition duration-200 overflow-hidden flex flex-col group animate-fade-in";
+                
+                card.innerHTML = `
+                    <div class="relative h-48 bg-emerald-950 overflow-hidden cursor-pointer" onclick="openDetailModal(${globalIdx})">
+                        <img id="card-img-${breed.id}" src="${imgSrc}" alt="${breed.name}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.onerror=null;this.src=createFallbackSvg('${breed.name}')">
+                        
+                        <div class="absolute top-3 left-3 bg-slate-900/80 backdrop-blur-md text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider border border-white/15">
+                            ${breed.species === 'dog' ? '<i class="fa-solid fa-dog mr-1 text-emerald-300"></i> Perro' : '<i class="fa-solid fa-cat mr-1 text-emerald-300"></i> Gato'}
+                        </div>
+
+                        <div class="absolute top-3 right-3 bg-emerald-950/85 text-emerald-300 font-mono text-[10px] font-bold px-2.5 py-1 rounded-full border border-emerald-500/40">
+                            ${breed.height}
+                        </div>
+                    </div>
+
+                    <div class="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between gap-2">
+                                <h3 class="font-bold text-slate-900 group-hover:text-emerald-700 transition cursor-pointer text-base truncate" onclick="openDetailModal(${globalIdx})">
+                                    ${breed.name}
+                                </h3>
+                                <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full shrink-0">
+                                    ${breed.sizeCategory}
+                                </span>
+                            </div>
+
+                            <p class="text-xs text-slate-500 mt-1.5 line-clamp-2 leading-relaxed">
+                                ${breed.desc}
+                            </p>
+                        </div>
+
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex items-center gap-2">
+                            <button onclick="openDetailModal(${globalIdx})" class="flex-1 py-2 bg-emerald-50 hover:bg-emerald-600 text-emerald-800 hover:text-white text-xs font-bold rounded-xl border border-emerald-200 hover:border-emerald-600 transition flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-eye"></i> Ver Ficha
+                            </button>
+                            <button onclick="toggleCompare('${breed.id}')" class="w-9 h-9 rounded-xl ${isCompared ? 'bg-emerald-600 text-white border-emerald-600' : 'bg-slate-50 text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 border-slate-200'} border flex items-center justify-center transition shrink-0" title="${isCompared ? 'Quitar de comparador' : 'Comparar raza'}">
+                                <i class="fa-solid ${isCompared ? 'fa-check' : 'fa-code-compare'} text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+
+                if (!imageCache[breed.id]) {
+                    fetchBreedWikipediaImage(breed).then(url => {
+                        const el = document.getElementById(`card-img-${breed.id}`);
+                        if (el) el.src = url;
+                    });
+                }
+            });
+        }
+
+        // MODAL NAVIGATION & POPULATION
+        async function openDetailModal(index, initialTab = 'tab-ficha') {
+            selectedBreedIndex = index;
+            const modal = document.getElementById('detail-modal');
+            modal.classList.remove('hidden');
+            document.body.classList.add('modal-open');
+
+            await updateModalData();
+            switchTab(initialTab);
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+            document.body.classList.remove('modal-open');
+        }
+
+        async function navigateModal(direction) {
+            selectedBreedIndex += direction;
+            if (selectedBreedIndex < 0) selectedBreedIndex = BREEDS_DATA.length - 1;
+            if (selectedBreedIndex >= BREEDS_DATA.length) selectedBreedIndex = 0;
+            await updateModalData();
+        }
+
+        async function updateModalData() {
+            const breed = BREEDS_DATA[selectedBreedIndex];
+            if (!breed) return;
+
+            document.getElementById('modal-breed-name').innerText = breed.name;
+            document.getElementById('modal-species-badge').innerText = breed.species === 'dog' ? 'Perro' : 'Gato';
+            document.getElementById('modal-pagination-counter').innerText = `${selectedBreedIndex + 1}/${BREEDS_DATA.length}`;
+
+            const isCompared = selectedCompareIds.includes(breed.id);
+            const compBtn = document.getElementById('modal-btn-compare');
+            if (isCompared) {
+                compBtn.className = "w-8 h-8 sm:w-auto sm:px-3 sm:py-1.5 bg-white text-emerald-900 text-xs font-bold rounded-full border border-white transition flex items-center justify-center gap-1.5 shadow";
+                compBtn.innerHTML = `<i class="fa-solid fa-check text-xs"></i> <span class="hidden md:inline">En Comparador</span>`;
+            } else {
+                compBtn.className = "w-8 h-8 sm:w-auto sm:px-3 sm:py-1.5 bg-emerald-950/50 hover:bg-emerald-900 text-xs font-semibold text-white rounded-full border border-emerald-400/30 transition flex items-center justify-center gap-1.5";
+                compBtn.innerHTML = `<i class="fa-solid fa-plus text-xs"></i> <span class="hidden md:inline">Comparar</span>`;
+            }
+
+            // Tab 1: Ficha & Real Size
+            const fichaImg = document.getElementById('ficha-img');
+            fichaImg.src = imageCache[breed.id] || createFallbackSvg(breed.name);
+            fichaImg.alt = breed.name;
+            fetchBreedWikipediaImage(breed).then(url => {
+                if (BREEDS_DATA[selectedBreedIndex].id === breed.id) {
+                    fichaImg.src = url;
+                }
+            });
+
+            document.getElementById('ficha-size-category').innerText = breed.sizeCategory;
+            document.getElementById('ficha-description').innerText = breed.desc;
+            document.getElementById('ficha-metric-height').innerText = breed.height;
+            document.getElementById('ficha-metric-weight').innerText = breed.weight;
+            document.getElementById('ficha-metric-lifespan').innerText = breed.lifespan;
+            document.getElementById('ficha-metric-energy-label').innerText = breed.energyLabel;
+            document.getElementById('ficha-selling-tip').innerText = breed.tip;
+            document.getElementById('ficha-rc-formula').innerText = breed.rcFormula;
+            document.getElementById('ficha-rc-desc').innerText = breed.rcDesc;
+
+            const colorBox = document.getElementById('ficha-colors');
+            colorBox.innerHTML = breed.colors.map(c => `
+                <span class="bg-emerald-50 text-emerald-800 text-[11px] px-2.5 py-1 rounded-lg border border-emerald-200 font-semibold">${c}</span>
+            `).join('');
+
+            // Wamiz 8 score bars
+            updateScoreBar('apt', breed.scores.apartment);
+            updateScoreBar('novice', breed.scores.novice);
+            updateScoreBar('kids', breed.scores.kids);
+            updateScoreBar('pets', breed.scores.pets);
+            updateScoreBar('energy', breed.scores.energy);
+            updateScoreBar('training', breed.scores.training);
+            updateScoreBar('barking', breed.scores.barking);
+            updateScoreBar('grooming', breed.scores.grooming);
+
+            // Real Size Scale
+            updateStageHeight();
+
+            // Tab 2: AI Photo Setup
+            const coatSelect = document.getElementById('ai-coat-select');
+            coatSelect.innerHTML = breed.colors.map(c => `<option value="${c}">${c}</option>`).join('');
+            const aiView = document.getElementById('ai-photo-view');
+            aiView.src = imageCache[breed.id] || createFallbackSvg(breed.name);
+            if (activeTabName === 'tab-foto') {
+                generateGeminiAdultPhoto();
+            }
+
+            // Tab 3: AI Advisor Chat Reset
+            resetChatHistory();
+        }
+
+        function updateScoreBar(key, val) {
+            const pct = (val / 5) * 100;
+            document.getElementById(`score-val-${key}`).innerText = `${val}/5`;
+            document.getElementById(`score-bar-${key}`).style.width = `${pct}%`;
+        }
+
+        function switchTab(tabId) {
+            activeTabName = tabId;
+            document.querySelectorAll('.modal-nav-tab').forEach(btn => {
+                btn.className = "modal-nav-tab py-3 px-2 sm:px-3 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-500 hover:text-emerald-700 flex items-center gap-1.5 whitespace-nowrap transition";
+            });
+            const activeBtn = document.getElementById(`nav-btn-${tabId.replace('tab-', '')}`);
+            if (activeBtn) {
+                activeBtn.className = "modal-nav-tab active-modal-tab py-3 px-2 sm:px-3 text-xs sm:text-sm font-bold border-b-2 border-emerald-600 text-emerald-700 flex items-center gap-1.5 whitespace-nowrap transition";
+            }
+
+            ['tab-content-ficha', 'tab-content-foto', 'tab-content-asistente'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById(`tab-content-${tabId.replace('tab-', '')}`).classList.remove('hidden');
+
+            if (tabId === 'tab-ficha') {
+                updateStageHeight();
+            } else if (tabId === 'tab-foto') {
+                generateGeminiAdultPhoto();
+            }
+        }
+
+        // REAL-SIZE SCALE LOGIC (0 - 180 CM)
+        function updateStageHeight() {
+            const breed = BREEDS_DATA[selectedBreedIndex];
+            if (!breed) return;
+
+            const humanHeight = parseInt(document.getElementById('human-height-select').value || "175");
+            const maxHeightCm = 180;
+            const stageMaxPx = 270;
+
+            const breedPx = Math.max(36, Math.round((breed.heightMax / maxHeightCm) * stageMaxPx));
+            const tablePx = Math.round((75 / maxHeightCm) * stageMaxPx);
+            const humanPx = Math.round((humanHeight / maxHeightCm) * stageMaxPx);
+
+            document.getElementById('stage-breed-vector').style.height = `${breedPx}px`;
+            document.getElementById('stage-breed-top-label').innerText = `${breed.height}`;
+            document.getElementById('stage-breed-bottom-label').innerText = breed.name;
+            document.getElementById('stage-breed-icon').className = breed.species === 'dog'
+                ? "fa-solid fa-dog text-2xl sm:text-3xl text-emerald-400"
+                : "fa-solid fa-cat text-2xl sm:text-3xl text-emerald-400";
+
+            document.getElementById('stage-table-vector').style.height = `${tablePx}px`;
+
+            document.getElementById('stage-human-vector').style.height = `${humanPx}px`;
+            document.getElementById('stage-human-top-label').innerText = `${humanHeight} cm`;
+        }
+
+        // GEMINI HYPER-REALISTIC ADULT PHOTO GENERATOR (NO POLLINATIONS)
+        async function generateGeminiAdultPhoto(forceRegenerate = false) {
+            const breed = BREEDS_DATA[selectedBreedIndex];
+            if (!breed) return;
+
+            const coat = document.getElementById('ai-coat-select').value || breed.colors[0];
+            const setting = document.getElementById('ai-setting-select').value || "Estudio Fotográfico Profesional";
+            const cacheKey = `${breed.id}_${coat}_${setting}`;
+
+            const imgEl = document.getElementById('ai-photo-view');
+            const overlay = document.getElementById('ai-loading-overlay');
+            const loadingText = document.getElementById('ai-loading-text');
+
+            // Always show real reference photo first so frame is never empty
+            imgEl.src = imageCache[breed.id] || createFallbackSvg(breed.name);
+            imgEl.alt = `${breed.name} - ${coat} - ${setting}`;
+
+            if (!forceRegenerate && aiGeneratedCache[cacheKey]) {
+                imgEl.src = aiGeneratedCache[cacheKey];
+                return;
+            }
+
+            if (!apiKey) {
+                // Static deployment without embedded API key: keep verified real breed photo cleanly
+                return;
+            }
+
+            loadingText.innerText = `Recreando ${breed.name} adulto (${coat}) con Gemini...`;
+            overlay.classList.remove('hidden');
+
+            const speciesEn = breed.species === 'dog' ? 'adult purebred dog' : 'adult purebred cat';
+            const prompt = `Hyper-realistic DSLR photograph taken with an 85mm f/1.4 lens of a full-grown ${speciesEn}, breed: ${breed.name}, with a ${coat} coat color, standing naturally in a ${setting}. Natural studio lighting, sharp focus on fur texture and eyes, authentic anatomical proportions of an adult ${breed.name}, 8k resolution, no text, no watermarks.`;
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        instances: [{ prompt }],
+                        parameters: { sampleCount: 1 }
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const b64 = data?.predictions?.[0]?.bytesBase64Encoded;
+                    if (b64) {
+                        const dataUrl = `data:image/png;base64,${b64}`;
+                        aiGeneratedCache[cacheKey] = dataUrl;
+                        imgEl.src = dataUrl;
+                    }
+                }
+            } catch (err) {
+                console.warn("Usando fotografía real verificada de respaldo:", err);
+            } finally {
+                overlay.classList.add('hidden');
+            }
+        }
+
+        function openLightboxFromFicha() {
+            const src = document.getElementById('ficha-img').src;
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-modal').classList.remove('hidden');
+        }
+
+        function openLightbox() {
+            const src = document.getElementById('ai-photo-view').src;
+            document.getElementById('lightbox-img').src = src;
+            document.getElementById('lightbox-modal').classList.remove('hidden');
+        }
+
+        function closeLightbox() {
+            document.getElementById('lightbox-modal').classList.add('hidden');
+        }
+
+        function downloadCurrentImage() {
+            const img = document.getElementById('ai-photo-view');
+            const a = document.createElement('a');
+            a.href = img.src;
+            a.download = `Petland_${BREEDS_DATA[selectedBreedIndex].id}_Adulto.jpg`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast("Imagen descargada");
+        }
+
+        // TAB 3: ASISTENTE IA PARA EL ASESOR (CHAT + GEMINI + OFFLINE INTELLIGENT ENGINE)
+        function resetChatHistory() {
+            const breed = BREEDS_DATA[selectedBreedIndex];
+            if (!breed) return;
+            chatMessages = [];
+            const history = document.getElementById('chat-history');
+            history.innerHTML = `
+                <div class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs shrink-0 font-bold shadow-xs">IA</div>
+                    <div class="bg-white p-3.5 rounded-2xl rounded-tl-none border border-emerald-200/80 text-xs sm:text-sm text-slate-700 leading-relaxed max-w-[85%] shadow-2xs">
+                        ¡Hola! Estoy listo para apoyarte en piso de venta con el <strong class="text-emerald-700">${breed.name}</strong> (${breed.sizeCategory}, alzada adulta ${breed.height}).<br><br>
+                        Usa los botones rápidos de arriba o escríbeme cualquier objeción o duda que tenga tu cliente.
+                    </div>
+                </div>
+            `;
+        }
+
+        function sendQuickAdvisorPrompt(topic) {
+            const breed = BREEDS_DATA[selectedBreedIndex];
+            const prompts = {
+                departamento: `¿El ${breed.name} se adapta bien a vivir en departamento?`,
+                ninos: `¿Qué tal convive el ${breed.name} con niños y otras mascotas?`,
+                pelaje: `¿Cuánto pelo suelta el ${breed.name} y qué mantenimiento necesita?`,
+                nutricion: `¿Qué alimento Royal Canin debo recomendarle para un ${breed.name} y por qué?`,
+                kit: `¿Qué accesorios esenciales debo ofrecer en el kit de primera compra para un ${breed.name}?`,
+                objecion: `Dame un argumento persuasivo y honesto de cierre para un cliente interesado en el ${breed.name}.`
+            };
+            const question = prompts[topic];
+            if (question) {
+                processAdvisorQuestion(question, topic);
+            }
+        }
+
+        function handleChatSubmit() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+            input.value = '';
+            processAdvisorQuestion(text, null);
+        }
+
+        async function processAdvisorQuestion(question, quickTopic = null) {
+            const breed = BREEDS_DATA[selectedBreedIndex];
+            appendChatBubble('user', question);
+
+            const typingId = 'typing-' + Date.now();
+            const history = document.getElementById('chat-history');
+            history.insertAdjacentHTML('beforeend', `
+                <div id="${typingId}" class="flex items-start gap-3">
+                    <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs shrink-0 font-bold">IA</div>
+                    <div class="bg-white px-4 py-3 rounded-2xl rounded-tl-none border border-emerald-200/80 text-xs text-emerald-700 font-medium flex items-center gap-2 shadow-2xs">
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce"></span>
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay:0.15s"></span>
+                        <span class="w-2 h-2 bg-emerald-500 rounded-full animate-bounce" style="animation-delay:0.3s"></span>
+                        <span>Preparando recomendación para asesor...</span>
+                    </div>
+                </div>
+            `);
+            history.scrollTop = history.scrollHeight;
+
+            let reply = null;
+
+            if (apiKey) {
+                try {
+                    const systemPrompt = `Eres un experto asesor senior de ventas de Petland México. Ayudas a los asesores en tienda a responder dudas de clientes de forma profesional, empática, clara y enfocada en venta consultiva ética y bienestar animal.
+Raza consultada: ${breed.name} (${breed.species === 'dog' ? 'Perro' : 'Gato'}).
+Tamaño: ${breed.sizeCategory} | Alzada adulta: ${breed.height} | Peso: ${breed.weight} | Vida: ${breed.lifespan}.
+Puntuaciones (1 a 5): Departamento ${breed.scores.apartment}/5, Primerizos ${breed.scores.novice}/5, Niños ${breed.scores.kids}/5, Otras mascotas ${breed.scores.pets}/5, Energía ${breed.scores.energy}/5, Adiestramiento ${breed.scores.training}/5, Ladrido ${breed.scores.barking}/5, Cepillado ${breed.scores.grooming}/5.
+Descripción: ${breed.desc}
+Tip de venta: ${breed.tip}
+Nutrición Royal Canin recomendada: ${breed.rcFormula} (${breed.rcDesc}).
+Kit sugerido: ${breed.kit.join(', ')}.
+Responde en español, con viñetas breves y prácticas para que el asesor se lo explique directo al cliente.`;
+
+                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            systemInstruction: { parts: [{ text: systemPrompt }] },
+                            contents: [{ role: 'user', parts: [{ text: question }] }]
+                        })
+                    });
+
+                    if (res.ok) {
+                        const data = await res.json();
+                        reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                    }
+                } catch (e) {
+                    console.warn("Fallback local activado para asistente IA:", e);
+                }
+            }
+
+            if (!reply) {
+                reply = buildSmartLocalAdvisorReply(breed, question, quickTopic);
+            }
+
+            const typingEl = document.getElementById(typingId);
+            if (typingEl) typingEl.remove();
+
+            appendChatBubble('assistant', reply);
+        }
+
+        function buildSmartLocalAdvisorReply(breed, question, topic) {
+            const q = normalizeText(question);
+
+            if (topic === 'departamento' || q.includes('departamento') || q.includes('espacio') || q.includes('casa')) {
+                const aptScore = breed.scores.apartment;
+                const verdict = aptScore >= 4
+                    ? `Sí, el <strong>${breed.name}</strong> tiene una excelente adaptabilidad a departamento (<strong>${aptScore}/5</strong>).`
+                    : `El <strong>${breed.name}</strong> tiene nivel de energía <strong>${breed.energyLabel}</strong> (adaptabilidad a departamento <strong>${aptScore}/5</strong>).`;
+                return `${verdict}<br><br>• <strong>Alzada adulta:</strong> ${breed.height} (${breed.weight}).<br>• <strong>Clave para el cliente:</strong> ${aptScore >= 4 ? 'Mientras cuente con sus paseos diarios y juguetes interactivos, estará muy tranquilo en interiores.' : 'Puede vivir en departamento si el tutor se compromete a paseos activos diarios y estimulación mental.'}`;
+            }
+
+            if (topic === 'ninos' || q.includes('nino') || q.includes('familia') || q.includes('mascota') || q.includes('conviv')) {
+                return `<strong>Convivencia familiar del ${breed.name}:</strong><br><br>• <strong>Con niños:</strong> ${breed.scores.kids}/5<br>• <strong>Con otras mascotas:</strong> ${breed.scores.pets}/5<br>• <strong>Ideal para primerizos:</strong> ${breed.scores.novice}/5<br><br>💡 <em>Consejo para el cliente:</em> ${breed.tip}`;
+            }
+
+            if (topic === 'pelaje' || q.includes('pelo') || q.includes('muda') || q.includes('cepill') || q.includes('alerg')) {
+                return `<strong>Mantenimiento y pelaje del ${breed.name}:</strong><br><br>• <strong>Nivel de cuidado/cepillado:</strong> ${breed.scores.grooming}/5<br>• <strong>Colores habituales:</strong> ${breed.colors.join(', ')}.<br>• <strong>Recomendación en tienda:</strong> Sugiere llevar desde hoy <em>${breed.kit[0]}</em> y <em>${breed.kit[1]}</em> para acostumbrarlo desde cachorro al cepillado positivo.`;
+            }
+
+            if (topic === 'nutricion' || q.includes('comida') || q.includes('croqueta') || q.includes('royal') || q.includes('nutric')) {
+                return `<strong>Recomendación Nutricional Oficial:</strong><br><br>• <strong>Fórmula ideal:</strong> ${breed.rcFormula}<br>• <strong>Beneficio clave para explicar al cliente:</strong> ${breed.rcDesc}<br><br>Recuerda indicar la transición gradual de 7 días si cambia de etapa Cachorro (Puppy/Kitten) a Adulto.`;
+            }
+
+            if (topic === 'kit' || q.includes('kit') || q.includes('accesorio') || q.includes('llev') || q.includes('compra')) {
+                const items = breed.kit.map(i => `• ${i}`).join('<br>');
+                return `<strong>Kit de Primera Compra Recomendado para ${breed.name}:</strong><br><br>${items}<br>• Alimento: <strong>${breed.rcFormula}</strong><br><br><em>Tip de venta cruzada:</em> Presenta el kit completo mostrando cómo cada artículo previene problemas específicos de su anatomía (${breed.sizeCategory}, ${breed.height}).`;
+            }
+
+            if (topic === 'objecion' || q.includes('cierre') || q.includes('argumento') || q.includes('vender')) {
+                return `<strong>Argumento de Cierre Consultivo (${breed.name}):</strong><br><br>"El ${breed.name} es una excelente elección porque en etapa adulta alcanzará una alzada de <strong>${breed.height}</strong> y un peso de <strong>${breed.weight}</strong>, encajando perfectamente con lo que buscas. ${breed.tip} Además, con su dieta <strong>${breed.rcFormula}</strong> tienes garantizado un desarrollo sano desde el primer día."`;
+            }
+
+            return `<strong>Asesoría rápida sobre ${breed.name}:</strong><br><br>• <strong>Perfil:</strong> ${breed.desc}<br>• <strong>Medidas adultas:</strong> ${breed.height} | ${breed.weight} | Esperanza de vida: ${breed.lifespan}.<br>• <strong>Nutrición:</strong> ${breed.rcFormula}.<br>• <strong>Tip de venta:</strong> ${breed.tip}`;
+        }
+
+        function appendChatBubble(role, htmlText) {
+            const history = document.getElementById('chat-history');
+            const isUser = role === 'user';
+            const plainText = htmlText.replace(/<br\s*\/?>/gi, '\n').replace(/<[^>]+>/g, '');
+').replace(/<[^>]+>/g, '');
+            const msgIdx = chatMessages.push(plainText) - 1;
+
+            const bubble = isUser
+                ? `<div class="flex items-start gap-2.5 flex-row-reverse">
+                        <div class="w-8 h-8 rounded-xl bg-slate-800 text-white flex items-center justify-center text-xs shrink-0 font-bold"><i class="fa-solid fa-user-tie"></i></div>
+                        <div class="bg-emerald-700 text-white p-3 rounded-2xl rounded-tr-none text-xs sm:text-sm leading-relaxed max-w-[82%] shadow-xs">${htmlText}</div>
+                   </div>`
+                : `<div class="flex items-start gap-2.5">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center text-xs shrink-0 font-bold shadow-xs">IA</div>
+                        <div class="bg-white border border-emerald-200/80 text-slate-700 p-3.5 rounded-2xl rounded-tl-none text-xs sm:text-sm leading-relaxed max-w-[85%] shadow-2xs space-y-2">
+                            <div>${htmlText}</div>
+                            <div class="pt-1.5 border-t border-slate-100 flex justify-end">
+                                <button onclick="copyChatMsg(${msgIdx})" class="text-[11px] font-semibold text-emerald-700 hover:text-emerald-900 flex items-center gap-1">
+                                    <i class="fa-regular fa-copy"></i> Copiar respuesta
+                                </button>
+                            </div>
+                        </div>
+                   </div>`;
+
+            history.insertAdjacentHTML('beforeend', bubble);
+            history.scrollTop = history.scrollHeight;
+        }
+
+        function copyChatMsg(idx) {
+            if (chatMessages[idx]) {
+                copyToClipboard(chatMessages[idx]);
+            }
+        }
+
+        // COMPARATOR LOGIC
+        function toggleCompare(breedId) {
+            const idx = selectedCompareIds.indexOf(breedId);
+            if (idx > -1) {
+                selectedCompareIds.splice(idx, 1);
+                showToast("Raza removida del comparador");
+            } else {
+                if (selectedCompareIds.length >= 2) {
+                    showToast("Máximo 2 razas a comparar. Quita una primero.");
+                    return;
+                }
+                selectedCompareIds.push(breedId);
+                showToast(`Raza agregada (${selectedCompareIds.length}/2)`);
+            }
+            updateCompareBadges();
+            renderGrid();
+        }
+
+        function toggleCompareFromModal() {
+            const currentBreed = BREEDS_DATA[selectedBreedIndex];
+            if (currentBreed) {
+                toggleCompare(currentBreed.id);
+                updateModalData();
+            }
+        }
+
+        function updateCompareBadges() {
+            const count = selectedCompareIds.length;
+            document.getElementById('compare-count-badge').innerText = `${count}/2`;
+            document.getElementById('compare-count-badge-mobile').innerText = `${count}/2`;
+        }
+
+        function openComparatorModal() {
+            document.getElementById('comparator-modal').classList.remove('hidden');
+            renderComparatorContent();
+        }
+
+        function closeComparatorModal() {
+            document.getElementById('comparator-modal').classList.add('hidden');
+        }
+
+        function clearComparator() {
+            selectedCompareIds = [];
+            updateCompareBadges();
+            renderGrid();
+            renderComparatorContent();
+            showToast("Comparador vaciado");
+        }
+
+        function renderComparatorContent() {
+            const container = document.getElementById('comparator-content');
+
+            if (selectedCompareIds.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12 text-slate-500 bg-white rounded-2xl border border-emerald-200">
+                        <i class="fa-solid fa-code-compare text-4xl text-emerald-300 mb-3"></i>
+                        <h4 class="text-base font-bold text-slate-800">No has seleccionado razas</h4>
+                        <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Toca el botón de comparar en cualquier tarjeta para enfrentar 2 razas lado a lado.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const breed1 = BREEDS_DATA.find(b => b.id === selectedCompareIds[0]);
+            const breed2 = selectedCompareIds.length > 1 ? BREEDS_DATA.find(b => b.id === selectedCompareIds[1]) : null;
+
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    ${renderCompareCard(breed1)}
+                    ${breed2 ? renderCompareCard(breed2) : `
+                        <div class="bg-white border-2 border-dashed border-emerald-300 rounded-2xl p-8 flex flex-col items-center justify-center text-center text-slate-500">
+                            <i class="fa-solid fa-plus-circle text-3xl mb-2 text-emerald-400"></i>
+                            <p class="text-xs font-semibold">Selecciona una segunda raza desde el catálogo principal para completar la comparativa.</p>
+                        </div>
+                    `}
+                </div>
+            `;
+        }
+
+        function renderCompareCard(breed) {
+            const imgSrc = imageCache[breed.id] || createFallbackSvg(breed.name);
+            return `
+                <div class="bg-white rounded-2xl p-5 border border-emerald-200 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <img src="${imgSrc}" alt="${breed.name}" class="w-14 h-14 rounded-xl object-cover border border-emerald-200">
+                            <div>
+                                <h4 class="text-base font-bold text-slate-900">${breed.name}</h4>
+                                <span class="text-xs text-emerald-700 font-semibold">${breed.species === 'dog' ? 'Perro' : 'Gato'} &bull; ${breed.sizeCategory}</span>
+                            </div>
+                        </div>
+                        <button onclick="toggleCompare('${breed.id}'); renderComparatorContent();" class="text-slate-400 hover:text-rose-500 p-2">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-2 text-center text-xs">
+                        <div class="bg-emerald-50 p-2 rounded-xl border border-emerald-100">
+                            <span class="block text-[10px] text-emerald-700 font-bold">Alzada</span>
+                            <span class="font-extrabold text-slate-900">${breed.height}</span>
+                        </div>
+                        <div class="bg-emerald-50 p-2 rounded-xl border border-emerald-100">
+                            <span class="block text-[10px] text-emerald-700 font-bold">Peso</span>
+                            <span class="font-extrabold text-slate-900">${breed.weight}</span>
+                        </div>
+                        <div class="bg-slate-50 p-2 rounded-xl border border-slate-200">
+                            <span class="block text-[10px] text-slate-500 font-bold">Vida</span>
+                            <span class="font-extrabold text-slate-900">${breed.lifespan}</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 text-xs">
+                        <div class="flex justify-between"><span class="text-slate-500">Apto Departamento:</span><span class="font-bold text-emerald-700">${breed.scores.apartment}/5</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Ideal Primerizos:</span><span class="font-bold text-emerald-700">${breed.scores.novice}/5</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Con Niños:</span><span class="font-bold text-emerald-700">${breed.scores.kids}/5</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Energía:</span><span class="font-bold text-emerald-700">${breed.scores.energy}/5</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500">Cepillado:</span><span class="font-bold text-emerald-700">${breed.scores.grooming}/5</span></div>
+                    </div>
+
+                    <div class="pt-3 border-t border-slate-100">
+                        <span class="block text-[10px] font-bold text-red-600 uppercase">Nutrición Royal Canin:</span>
+                        <p class="text-xs text-slate-800 font-bold mt-0.5">${breed.rcFormula}</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // WHATSAPP MODAL LOGIC
+        function openWhatsappModal() {
+            document.getElementById('whatsapp-modal').classList.remove('hidden');
+            buildWhatsappMessage();
+        }
+
+        function closeWhatsappModal() {
+            document.getElementById('whatsapp-modal').classList.add('hidden');
+        }
+
+        function applyWhatsappPreset() {
+            const preset = document.getElementById('wa-preset-select').value;
+            document.getElementById('wa-check-basics').checked = true;
+            document.getElementById('wa-check-metrics').checked = (preset === 'full' || preset === 'size');
+            document.getElementById('wa-check-rc').checked = (preset === 'full' || preset === 'nutrition');
+            document.getElementById('wa-check-tip').checked = (preset === 'full' || preset === 'size');
+            buildWhatsappMessage();
+        }
+
+        function buildWhatsappMessage() {
+            const breed = BREEDS_DATA[selectedBreedIndex];
+            if (!breed) return;
+
+            let msg = `*Petland - Guía de Asesoría en Tienda* 🐾\n\n`;
+            msg += `*Raza:* ${breed.name} (${breed.species === 'dog' ? 'Perro' : 'Gato'})\n`;
+
+            if (document.getElementById('wa-check-basics').checked) {
+                msg += `📌 *Tamaño:* ${breed.sizeCategory}\n`;
+                msg += `🎨 *Colores:* ${breed.colors.join(', ')}\n`;
+            }
+
+            if (document.getElementById('wa-check-metrics').checked) {
+                msg += `📏 *Alzada Adulta:* ${breed.height}\n`;
+                msg += `⚖️ *Peso Adulto:* ${breed.weight}\n`;
+                msg += `⏳ *Esperanza de Vida:* ${breed.lifespan}\n`;
+            }
+
+            if (document.getElementById('wa-check-rc').checked) {
+                msg += `\n🥣 *Nutrición Recomendada Royal Canin:*\n`;
+                msg += `👉 *${breed.rcFormula}*\n`;
+                msg += `_${breed.rcDesc}_\n`;
+            }
+
+            if (document.getElementById('wa-check-tip').checked) {
+                msg += `\n💡 *Recomendación de tu Asesor Petland:*\n`;
+                msg += `${breed.tip}\n`;
+            }
+
+            msg += `\n¡Gracias por visitarnos en Petland! Estamos para acompañarte en cada etapa de tu mascota.`;
+            document.getElementById('wa-message-text').value = msg;
+        }
+        }
+
+        function copyNutritionInfo() {
+            const breed = BREEDS_DATA[selectedBreedIndex];
+            copyToClipboard(`Nutrición Royal Canin para ${breed.name}: ${breed.rcFormula} - ${breed.rcDesc}`);
+        }
+
+        function copyWhatsappMessage() {
+            copyToClipboard(document.getElementById('wa-message-text').value);
+        }
+
+        function copyToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                showToast("Copiado al portapapeles");
+            } catch (err) {
+                showToast("No se pudo copiar");
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function sendToWhatsappLink() {
+            const text = document.getElementById('wa-message-text').value;
+            window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 2800);
+        }
+    </script>
+</body>
+</html>
